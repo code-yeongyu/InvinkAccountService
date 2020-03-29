@@ -10,10 +10,10 @@ import (
 
 // SetupModels initializes and migrates models
 func SetupModels() *gorm.DB {
-	dbInfo := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s",
+	dbInfo := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 		os.Getenv("ACCOUNT_DB_HOST"), os.Getenv("ACCOUNT_DB_PORT"),
 		os.Getenv("ACCOUNT_DB_USER"), os.Getenv("ACCOUNT_DB_DBNAME"),
-		os.Getenv("ACCOUNT_DB_PASSWORD"))
+		os.Getenv("ACCOUNT_DB_PASSWORD"), os.Getenv("ACCOUNT_DB_SSLMODE"))
 	db, err := gorm.Open("postgres", dbInfo)
 
 	if err != nil {
