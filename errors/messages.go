@@ -1,6 +1,7 @@
 package errors
 
-const Messages = map[int]String{
+// Messages contains the error message for each error code
+var Messages = map[int]string{
 	EmailEmptyCode:       "The email field is empty.",
 	EmailExistsCode:      "Email exists.",
 	EmailFormatErrorCode: "Email format error.",
