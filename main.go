@@ -17,8 +17,7 @@ func setupServer() *gin.Engine {
 		c.Set("db", db)
 		c.Next()
 	})
-
-	// routing code
+	setupRoutes(r)
 
 	return r
 }
