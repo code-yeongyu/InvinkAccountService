@@ -60,7 +60,7 @@ func TestProperReuqest(t *testing.T) {
 	w := performRequest(ROUTER, "POST", "/register",
 		strings.NewReader(string(formJSON)),
 	)
-	assert.Equal(t, http.StatusOK, w.Code) // check http status code
+	assert.Equal(t, http.StatusCreated, w.Code) // check http status code
 	err := DB.Where("username = ?", form.Username).First(userModel).Error
 	assert.NotNil(t, err) // check record existing
 }
@@ -82,8 +82,8 @@ func TestEmailDuplicate(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)                                        // check response form error
-	assert.Equal(t, response["error"], errors.EmailEmptyCode) // check error
+	assert.Nil(t, err)                                         // check response form error
+	assert.Equal(t, response["error"], errors.EmailExistsCode) // check error
 }
 
 func TestUsernameDuplicate(t *testing.T) {
@@ -103,8 +103,8 @@ func TestUsernameDuplicate(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)                                           // check response form error
-	assert.Equal(t, response["error"], errors.UsernameEmptyCode) // check error
+	assert.Nil(t, err)                                            // check response form error
+	assert.Equal(t, response["error"], errors.UsernameExistsCode) // check error
 }
 
 func TestImproperEmail(t *testing.T) {
@@ -213,7 +213,6 @@ func TestImproperPublicKey(t *testing.T) {
 }
 
 func TestEmailEmpty(t *testing.T) {
-	var response map[string][]string
 	form := &forms.Registration{
 		Username:  "test",
 		Password:  "12345678",
@@ -227,9 +226,6 @@ func TestEmailEmpty(t *testing.T) {
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
-	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)                                        // check response form error
-	assert.Equal(t, response["error"], errors.EmailEmptyCode) // check error
 }
 
 func TestUsernameEmpty(t *testing.T) {
@@ -247,13 +243,9 @@ func TestUsernameEmpty(t *testing.T) {
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
-	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)                                           // check response form error
-	assert.Equal(t, response["error"], errors.UsernameEmptyCode) // check error
 }
 
 func TestPasswordEmpty(t *testing.T) {
-	var response map[string][]string
 	form := &forms.Registration{
 		Email:     "test1@example.com",
 		Username:  "test",
@@ -267,13 +259,9 @@ func TestPasswordEmpty(t *testing.T) {
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
-	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)                                           // check response form error
-	assert.Equal(t, response["error"], errors.PasswordEmptyCode) // check error
 }
 
 func TestPublicKeyEmpty(t *testing.T) {
-	var response map[string][]string
 	form := &forms.Registration{
 		Email:     "test1@example.com",
 		Username:  "test",
@@ -288,9 +276,6 @@ func TestPublicKeyEmpty(t *testing.T) {
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
-	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)                                            // check response form error
-	assert.Equal(t, response["error"], errors.PublicKeyEmptyCode) // check error
 }
 
 func TestCleanup(t *testing.T) {
