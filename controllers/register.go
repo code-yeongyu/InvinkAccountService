@@ -35,8 +35,21 @@ func verifyPassword(s string) bool {
 	return number && lower && upper && special
 }
 
-// RegisterUser is a handler for registering a user
-func RegisterUser(c *gin.Context) {
+// RegisterUser godoc
+// @Summary Register an user
+// @Description Register an user with given information
+// @Accept  json
+// @Produce  json
+// @Param email path string true "Email"
+// @Param username path string true "Username"
+// @Param password path string true "Password"
+// @Param publicKey path string true "RSA 2048 PublicKey"
+// @Param nickname path string false "Nickname"
+// @Param bio path string false "Bio"
+// @Success 201 {object} EmptyResponse "User account created"
+// @Failure 400 {object} EmailExistsResponse "Normal Form error, like username duplicate"
+// @Router /register/ [post]
+func (ctrler *Controller) RegisterUser(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
 	var user models.User
