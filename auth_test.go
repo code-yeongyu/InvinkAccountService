@@ -2,32 +2,18 @@ package main
 
 import (
 	"encoding/json"
-	"io"
 	"net/http"
-	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
 
-	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 
 	"invink/account-service/forms"
 	"invink/account-service/models"
 )
 
-func performRequest(r http.Handler, method, path string, body io.Reader) *httptest.ResponseRecorder {
-	req, _ := http.NewRequest(method, path, body)
-	w := httptest.NewRecorder()
-	r.ServeHTTP(w, req)
-	return w
-}
-
-var ROUTER *gin.Engine
-var PUBLICKEY string
-var DBNAMEORIGIN string
-
-func TestInitiate(t *testing.T) {
+func TestInitiateForAuthentication(t *testing.T) {
 	DBNAMEORIGIN = os.Getenv("ACCOUNT_DB_DBNAME")
 	os.Setenv("ACCOUNT_DB_DBNAME", "testing_db")
 	ROUTER = setupServer()
@@ -62,7 +48,7 @@ func TestProperEmailAuthRequest(t *testing.T) {
 		Password: "A-maz1ng*pass",
 	}
 	formJSON, _ := json.Marshal(form)
-	w := performRequest(ROUTER, "POST", "/register",
+	w := performRequest(ROUTER, "POST", "/auth",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusOK, w.Code) // check http status code
@@ -78,7 +64,7 @@ func TestProperUsernameAuthRequest(t *testing.T) {
 		Password: "A-maz1ng*pass",
 	}
 	formJSON, _ := json.Marshal(form)
-	w := performRequest(ROUTER, "POST", "/register",
+	w := performRequest(ROUTER, "POST", "/auth",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusOK, w.Code) // check http status code
@@ -88,70 +74,54 @@ func TestProperUsernameAuthRequest(t *testing.T) {
 }
 
 func TestWrongUsernameAuthRequest(t *testing.T) {
-	var response map[string]string
 	form := &forms.Authentication{
 		ID:       "wrong_user",
 		Password: "A-maz1ng*pass",
 	}
 	formJSON, _ := json.Marshal(form)
-	w := performRequest(ROUTER, "POST", "/register",
+	w := performRequest(ROUTER, "POST", "/auth",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
-	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)
-	assert.Equal(t, "", response["token"]) // check if token empty
 }
 
 func TestProperUsernameWrongPasswordAuthRequest(t *testing.T) {
-	var response map[string]string
 	form := &forms.Authentication{
 		ID:       "nothing",
 		Password: "12345678",
 	}
 	formJSON, _ := json.Marshal(form)
-	w := performRequest(ROUTER, "POST", "/register",
+	w := performRequest(ROUTER, "POST", "/auth",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
-	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)
-	assert.Equal(t, "", response["token"]) // check if token empty
 }
 
 func TestProperEmailWrongPasswordAuthRequest(t *testing.T) {
-	var response map[string]string
 	form := &forms.Authentication{
 		ID:       "test@example.com",
 		Password: "12345678",
 	}
 	formJSON, _ := json.Marshal(form)
-	w := performRequest(ROUTER, "POST", "/register",
+	w := performRequest(ROUTER, "POST", "/auth",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
-	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)
-	assert.Equal(t, "", response["token"]) // check if token empty
 }
 
 func TestWrongInfoAuthRequest(t *testing.T) {
-	var response map[string]string
 	form := &forms.Authentication{
 		ID:       "nothing",
 		Password: "12345678",
 	}
 	formJSON, _ := json.Marshal(form)
-	w := performRequest(ROUTER, "POST", "/register",
+	w := performRequest(ROUTER, "POST", "/auth",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
-	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)
-	assert.Equal(t, "", response["token"]) // check if token empty
 }
 
-func TestCleanup(t *testing.T) {
+func TestCleanupForAuthentication(t *testing.T) {
 	db := models.Setup()
 	db.DropTable(&models.User{})
 	db.DropTable("followed_by")
