@@ -28,7 +28,7 @@ var ROUTER *gin.Engine
 var PUBLICKEY string
 var DBNAMEORIGIN string
 
-func TestInitiate(t *testing.T) {
+func TestInitiateForRegistration(t *testing.T) {
 	DBNAMEORIGIN = os.Getenv("ACCOUNT_DB_DBNAME")
 	os.Setenv("ACCOUNT_DB_DBNAME", "testing_db")
 	ROUTER = setupServer()
@@ -270,7 +270,7 @@ func TestPublicKeyEmpty(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
 }
 
-func TestCleanup(t *testing.T) {
+func TestCleanupForRegistration(t *testing.T) {
 	db := models.Setup()
 	db.DropTable(&models.User{})
 	db.DropTable("followed_by")
