@@ -13,6 +13,31 @@ import (
 	"invink/account-service/models"
 )
 
+func createUser(username string) {
+	PUBLICKEY = `-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhTGv0frCyyhs3Xs5LyHE
+4NXcM5lMqGJGNqCBo6zzjgv5BtZE5/bUHmJ8moUwTLLehtQt+wLq51wyJLe36142
+3QNGO+5TCrKNWrOAxKhTRLwlHSjiXC/RgxbFYeD0EXGi54AwQRs27VFgzPRP7q4O
+MtrXIinzqhhtJTorpP8t4n9FVXrpDmJnTbF5ct/3L+hCyeWmgAsrML3rHqJ+zfw1
+DGogIrljdcLPzdlIcH9QjQJaWnfL7usl546aU0gkKjlUcB5+HUPNPkN3z9LEouHi
+Kt8yVspTqyhnMnTNQnmGG7TuVCnWPXWaBaI/Aozgilj3+BIo9SiUIqKfc0FPeV61
+LQIDAQAB
+-----END PUBLIC KEY-----`
+
+	form := &forms.Registration{
+		Email:     "test@example.com",
+		Username:  username,
+		Password:  "A-maz1ng*pass",
+		PublicKey: PUBLICKEY,
+		Nickname:  "AmazingMengmota",
+		Bio:       "Hi, I'm the great Mengmota",
+	}
+	formJSON, _ := json.Marshal(form)
+	performRequest(ROUTER, "POST", "/register",
+		strings.NewReader(string(formJSON)),
+	)
+}
+
 func TestInitiateForAuthentication(t *testing.T) {
 	DBNAMEORIGIN = os.Getenv("ACCOUNT_DB_DBNAME")
 	os.Setenv("ACCOUNT_DB_DBNAME", "testing_db")
@@ -27,18 +52,7 @@ Kt8yVspTqyhnMnTNQnmGG7TuVCnWPXWaBaI/Aozgilj3+BIo9SiUIqKfc0FPeV61
 LQIDAQAB
 -----END PUBLIC KEY-----`
 
-	form := &forms.Registration{
-		Email:     "test@example.com",
-		Username:  "testuser",
-		Password:  "A-maz1ng*pass",
-		PublicKey: PUBLICKEY,
-		Nickname:  "AmazingMengmota",
-		Bio:       "Hi, I'm the great Mengmota",
-	}
-	formJSON, _ := json.Marshal(form)
-	performRequest(ROUTER, "POST", "/register",
-		strings.NewReader(string(formJSON)),
-	)
+	createUser("testuser")
 }
 
 func TestProperEmailAuthRequest(t *testing.T) {
