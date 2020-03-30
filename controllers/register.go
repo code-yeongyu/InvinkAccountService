@@ -14,7 +14,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func abortWith404ErrorResponse(c *gin.Context, errorCode int) {
+func abortWith400ErrorResponse(c *gin.Context, errorCode int) {
 	c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": errorCode, "msg": errors.Messages[errorCode]})
 }
 
@@ -62,45 +62,45 @@ func (ctrler *Controller) RegisterUser(c *gin.Context) {
 	}
 
 	if err := db.Where("email = ?", inputForm.Email).First(&user).Error; err == nil {
-		abortWith404ErrorResponse(c, errors.EmailExistsCode)
+		abortWith400ErrorResponse(c, errors.EmailExistsCode)
 		return
 	} // validating email duplicates
 
 	re := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`) // email format
 	if !re.MatchString(inputForm.Email) {
-		abortWith404ErrorResponse(c, errors.EmailFormatErrorCode)
+		abortWith400ErrorResponse(c, errors.EmailFormatErrorCode)
 		return
 	} // validating if email is in proper format
 
 	/* email validation */
 
 	if err := db.Where("username = ?", inputForm.Username).First(&user).Error; err == nil {
-		abortWith404ErrorResponse(c, errors.UsernameExistsCode)
+		abortWith400ErrorResponse(c, errors.UsernameExistsCode)
 		return
 	} // validating username duplicates
 
 	re = regexp.MustCompile(`^[0-9a-zA-Z._]+$`)
 	if !re.MatchString(inputForm.Username) {
-		abortWith404ErrorResponse(c, errors.UsernameFormatErrorCode)
+		abortWith400ErrorResponse(c, errors.UsernameFormatErrorCode)
 		return
 	} // validating if username is in proper format
 
 	/* username validation */
 
 	if len(inputForm.Password) < 8 {
-		abortWith404ErrorResponse(c, errors.PasswordTooShortCode)
+		abortWith400ErrorResponse(c, errors.PasswordTooShortCode)
 		return
 	} // validating password length
 
 	if !verifyPassword(inputForm.Password) {
-		abortWith404ErrorResponse(c, errors.PasswordVulnerableErrorCode)
+		abortWith400ErrorResponse(c, errors.PasswordVulnerableErrorCode)
 		return
 	} // validating password format
 
 	/* password validation */
 
 	if !strings.Contains(inputForm.PublicKey, "PUBLIC KEY") {
-		abortWith404ErrorResponse(c, errors.PublicKeyErrorCode)
+		abortWith400ErrorResponse(c, errors.PublicKeyErrorCode)
 		return
 	}
 
