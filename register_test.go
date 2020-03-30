@@ -271,8 +271,8 @@ func TestPublicKeyEmpty(t *testing.T) {
 }
 
 func TestCleanup(t *testing.T) {
-	db := models.SetupModels()
-	db.DropTable(&models.UserModel{})
+	db := models.Setup()
+	db.DropTable(&models.User{})
 	os.Setenv("ACCOUNT_DB_DBNAME", DBNAMEORIGIN)
 	os.Setenv("ACCOUNT_DB_DBNAME", "testing_db")
 }

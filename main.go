@@ -12,7 +12,7 @@ func main() {
 
 func setupServer() *gin.Engine {
 	r := gin.Default()
-	db := models.SetupModels()
+	db := models.Setup()
 	r.Use(func(c *gin.Context) {
 		c.Set("db", db)
 		c.Next()

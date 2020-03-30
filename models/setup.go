@@ -8,8 +8,8 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres" // to manage the postgres database
 )
 
-// SetupModels initializes and migrates models
-func SetupModels() *gorm.DB {
+// Setup initializes and migrates models
+func Setup() *gorm.DB {
 	dbInfo := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 		os.Getenv("ACCOUNT_DB_HOST"), os.Getenv("ACCOUNT_DB_PORT"),
 		os.Getenv("ACCOUNT_DB_USER"), os.Getenv("ACCOUNT_DB_DBNAME"),
@@ -21,6 +21,6 @@ func SetupModels() *gorm.DB {
 		panic("Failed to connect to database")
 	}
 
-	db.AutoMigrate(&UserModel{})
+	db.AutoMigrate(&User{})
 	return db
 }

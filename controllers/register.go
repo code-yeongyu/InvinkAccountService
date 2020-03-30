@@ -39,7 +39,7 @@ func verifyPassword(s string) bool {
 func RegisterUser(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
-	var user models.UserModel
+	var user models.User
 	var inputForm forms.Registration
 
 	if err := c.ShouldBindJSON(&inputForm); err != nil {
@@ -95,7 +95,7 @@ func RegisterUser(c *gin.Context) {
 
 	passwordHash, _ := bcrypt.GenerateFromPassword([]byte(inputForm.Password), 15)
 
-	user = models.UserModel{
+	user = models.User{
 		Username:  inputForm.Username,
 		Email:     inputForm.Email,
 		Password:  string(passwordHash),
