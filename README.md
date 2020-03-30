@@ -1,6 +1,6 @@
 # InvinkAccountService
 - Registeration
-- Email Authentication
+- Email Verification
 - Creating Token
 - Managing Profile
 
@@ -12,3 +12,4 @@ Every API should be done by following process.
 1. Write test cases
 1. Write a controller
 1. Satisfy test cases
+1. Write a document for the procedure

@@ -1,4 +1,9 @@
 definitions:
+  controllers.AuthenticatedResponse:
+    properties:
+      token:
+        type: string
+    type: object
   controllers.EmailExistsResponse:
     properties:
       code:
@@ -12,6 +17,34 @@ info:
   contact: {}
   license: {}
 paths:
+  /auth/:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate an user with given information, to get a jwt token
+      parameters:
+      - description: Username or Email
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Password
+        in: path
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Valid information, authenticated
+          schema:
+            $ref: '#/definitions/controllers.AuthenticatedResponse'
+        "400":
+          description: Wrong format or invalid information
+          schema:
+            $ref: '#/definitions/controllers.EmptyResponse'
+      summary: Authenticate an user
   /register/:
     post:
       consumes:

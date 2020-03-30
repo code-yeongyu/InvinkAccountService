@@ -9,3 +9,8 @@ type EmailExistsResponse struct {
 	Code    int
 	Message string `json:"msg"`
 }
+
+// AuthenticatedResponse Example
+type AuthenticatedResponse struct {
+	Token string
+}
