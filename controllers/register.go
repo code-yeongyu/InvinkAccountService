@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"invink/account-service/errors"
 	"invink/account-service/forms"
 	"invink/account-service/models"
@@ -44,7 +43,8 @@ func RegisterUser(c *gin.Context) {
 	var inputForm forms.Registration
 
 	if err := c.ShouldBindJSON(&inputForm); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"msg": err.Error()})
+		errorCode := errors.FormErrorCode
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": errorCode, "msg": errors.Messages[errorCode], "detail": err.Error()})
 		return
 	}
 
@@ -68,7 +68,6 @@ func RegisterUser(c *gin.Context) {
 
 	re = regexp.MustCompile(`^[0-9a-zA-Z._]+$`)
 	if !re.MatchString(inputForm.Username) {
-		fmt.Println(inputForm.Username)
 		abortWith404ErrorResponse(c, errors.UsernameFormatErrorCode)
 		return
 	} // validating if username is in proper format

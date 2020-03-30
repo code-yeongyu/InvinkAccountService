@@ -1,7 +1,7 @@
 package errors
 
 const (
-	UndefinedError = 0
+	FormErrorCode = 1
 
 	EmailExistsCode      = 101
 	EmailFormatErrorCode = 102

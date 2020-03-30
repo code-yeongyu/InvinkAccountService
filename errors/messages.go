@@ -2,7 +2,7 @@ package errors
 
 // Messages contains the error message for each error code
 var Messages = map[int]string{
-	UndefinedError: "Undefined error",
+	FormErrorCode: "Form error",
 
 	EmailExistsCode:      "Email exists.",
 	EmailFormatErrorCode: "Email format error.",
