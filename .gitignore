@@ -16,3 +16,6 @@
 
 # environment variables
 envs.sh
+
+# gin binary
+gin-bin
