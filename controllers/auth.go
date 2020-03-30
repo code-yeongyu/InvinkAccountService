@@ -5,6 +5,7 @@ import (
 	"invink/account-service/forms"
 	"invink/account-service/models"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -14,6 +15,15 @@ import (
 )
 
 // AuthUser godoc
+// @Summary Authenticate an user
+// @Description Authenticate an user with given information, to get a jwt token
+// @Accept  json
+// @Produce  json
+// @Param id path string true "Username or Email"
+// @Param password path string true "Password"
+// @Success 200 {object} AuthenticatedResponse "Valid information, authenticated"
+// @Failure 400 {object} EmptyResponse "Wrong format or invalid information"
+// @Router /auth/ [post]
 func (ctrler *Controller) AuthUser(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
@@ -46,7 +56,7 @@ func (ctrler *Controller) AuthUser(c *gin.Context) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString([]byte("jwtkey"))
+	tokenString, err := token.SignedString([]byte(os.Getenv("ACCOUNT_JWT_KEY")))
 
 	if err != nil {
 		c.Abort()

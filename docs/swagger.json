@@ -5,6 +5,48 @@
         "license": {}
     },
     "paths": {
+        "/auth/": {
+            "post": {
+                "description": "Authenticate an user with given information, to get a jwt token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Authenticate an user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Username or Email",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Password",
+                        "name": "password",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Valid information, authenticated",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.AuthenticatedResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Wrong format or invalid information",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.EmptyResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/register/": {
             "post": {
                 "description": "Register an user with given information",
@@ -75,6 +117,14 @@
         }
     },
     "definitions": {
+        "controllers.AuthenticatedResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
         "controllers.EmailExistsResponse": {
             "type": "object",
             "properties": {
