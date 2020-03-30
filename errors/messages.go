@@ -2,7 +2,7 @@ package errors
 
 // Messages contains the error message for each error code
 var Messages = map[int]string{
-	EmailEmptyCode:       "The email field is empty.",
+	EmailEmptyCode:       "Email field is empty.",
 	EmailExistsCode:      "Email exists.",
 	EmailFormatErrorCode: "Email format error.",
 
