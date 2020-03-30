@@ -8,6 +8,7 @@ type UserModel struct {
 	Password   string      `gorm:"column:password;not null"`
 	Nickname   string      `gorm:"column:nickname"`
 	Bio        string      `gorm:"column:bio"`
+	PictureURL string      `gorm:"column:picture_url"`
 	Following  []UserModel `gorm:"column:following;default:[]"`
 	FollowedBy []UserModel `gorm:"column:followed_by;default:[]"`
 	PublicKey  string      `gorm:"column:public_key;not null"`
