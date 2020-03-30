@@ -1,0 +1,61 @@
+definitions:
+  controllers.EmailExistsResponse:
+    properties:
+      code:
+        type: integer
+      msg:
+        type: string
+    type: object
+  controllers.EmptyResponse:
+    type: object
+info:
+  contact: {}
+  license: {}
+paths:
+  /register/:
+    post:
+      consumes:
+      - application/json
+      description: Register an user with given information
+      parameters:
+      - description: Email
+        in: path
+        name: email
+        required: true
+        type: string
+      - description: Username
+        in: path
+        name: username
+        required: true
+        type: string
+      - description: Password
+        in: path
+        name: password
+        required: true
+        type: string
+      - description: RSA 2048 PublicKey
+        in: path
+        name: publicKey
+        required: true
+        type: string
+      - description: Nickname
+        in: path
+        name: nickname
+        type: string
+      - description: Bio
+        in: path
+        name: bio
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User account created
+          schema:
+            $ref: '#/definitions/controllers.EmptyResponse'
+        "400":
+          description: Normal Form error, like username duplicate
+          schema:
+            $ref: '#/definitions/controllers.EmailExistsResponse'
+      summary: Register an user
+swagger: "2.0"
