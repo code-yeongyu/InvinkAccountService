@@ -1,18 +1,18 @@
 package errors
 
 const (
-	EmailEmpty       = 100
-	EmailExists      = 101
-	EmailFormatError = 102
+	EmailEmptyCode       = 100
+	EmailExistsCode      = 101
+	EmailFormatErrorCode = 102
 
-	UsernameEmpty       = 200
-	UsernameExists      = 201
-	UsernameFormatError = 202
+	UsernameEmptyCode       = 200
+	UsernameExistsCode      = 201
+	UsernameFormatErrorCode = 202
 
-	PasswordEmpty           = 300
-	PasswordTooShort        = 301
-	PasswordVulnerableError = 302
+	PasswordEmptyCode           = 300
+	PasswordTooShortCode        = 301
+	PasswordVulnerableErrorCode = 302
 
-	PublicKeyEmpty = 400
-	PublicKeyError = 402
+	PublicKeyEmptyCode = 400
+	PublicKeyErrorCode = 402
 )

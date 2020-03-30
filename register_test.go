@@ -91,8 +91,8 @@ func TestEmailDuplicate(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)                                       // check response form error
-	assert.Equal(t, response["error"][0], errors.EmailEmpty) // check error
+	assert.Nil(t, err)                                           // check response form error
+	assert.Equal(t, response["error"][0], errors.EmailEmptyCode) // check error
 }
 
 func TestUsernameDuplicate(t *testing.T) {
@@ -112,8 +112,8 @@ func TestUsernameDuplicate(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)                                          // check response form error
-	assert.Equal(t, response["error"][0], errors.UsernameEmpty) // check error
+	assert.Nil(t, err)                                              // check response form error
+	assert.Equal(t, response["error"][0], errors.UsernameEmptyCode) // check error
 }
 
 func TestEmailUsernameDuplicate(t *testing.T) {
@@ -133,9 +133,9 @@ func TestEmailUsernameDuplicate(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)                                                      // check response form error
-	assert.True(t, integerExists(response["error"], errors.EmailExists))    // check email error
-	assert.True(t, integerExists(response["error"], errors.UsernameExists)) // check username error
+	assert.Nil(t, err)                                                          // check response form error
+	assert.True(t, integerExists(response["error"], errors.EmailExistsCode))    // check email error
+	assert.True(t, integerExists(response["error"], errors.UsernameExistsCode)) // check username error
 }
 
 func TestImproperEmail(t *testing.T) {
@@ -155,8 +155,8 @@ func TestImproperEmail(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)                                             // check response form error
-	assert.Equal(t, response["error"][0], errors.EmailFormatError) // check error
+	assert.Nil(t, err)                                                 // check response form error
+	assert.Equal(t, response["error"][0], errors.EmailFormatErrorCode) // check error
 }
 
 func TestImproperUsername(t *testing.T) {
@@ -176,8 +176,8 @@ func TestImproperUsername(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)                                                // check response form error
-	assert.Equal(t, response["error"][0], errors.UsernameFormatError) // check error
+	assert.Nil(t, err)                                                    // check response form error
+	assert.Equal(t, response["error"][0], errors.UsernameFormatErrorCode) // check error
 }
 
 func TestTooShortPassword(t *testing.T) {
@@ -197,8 +197,8 @@ func TestTooShortPassword(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)                                             // check response form error
-	assert.Equal(t, response["error"][0], errors.PasswordTooShort) // check error
+	assert.Nil(t, err)                                                 // check response form error
+	assert.Equal(t, response["error"][0], errors.PasswordTooShortCode) // check error
 }
 
 func TestVulnerablePassword(t *testing.T) {
@@ -218,8 +218,8 @@ func TestVulnerablePassword(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)                                                    // check response form error
-	assert.Equal(t, response["error"][0], errors.PasswordVulnerableError) // check error
+	assert.Nil(t, err)                                                        // check response form error
+	assert.Equal(t, response["error"][0], errors.PasswordVulnerableErrorCode) // check error
 }
 
 func TestImproperPublicKey(t *testing.T) {
@@ -239,8 +239,8 @@ func TestImproperPublicKey(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)                                           // check response form error
-	assert.Equal(t, response["error"][0], errors.PublicKeyError) // check error
+	assert.Nil(t, err)                                               // check response form error
+	assert.Equal(t, response["error"][0], errors.PublicKeyErrorCode) // check error
 }
 
 func TestEmailEmpty(t *testing.T) {
@@ -259,8 +259,8 @@ func TestEmailEmpty(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)                                       // check response form error
-	assert.Equal(t, response["error"][0], errors.EmailEmpty) // check error
+	assert.Nil(t, err)                                           // check response form error
+	assert.Equal(t, response["error"][0], errors.EmailEmptyCode) // check error
 }
 
 func TestUsernameEmpty(t *testing.T) {
@@ -279,8 +279,8 @@ func TestUsernameEmpty(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)                                          // check response form error
-	assert.Equal(t, response["error"][0], errors.UsernameEmpty) // check error
+	assert.Nil(t, err)                                              // check response form error
+	assert.Equal(t, response["error"][0], errors.UsernameEmptyCode) // check error
 }
 
 func TestPasswordEmpty(t *testing.T) {
@@ -299,8 +299,8 @@ func TestPasswordEmpty(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)                                          // check response form error
-	assert.Equal(t, response["error"][0], errors.PasswordEmpty) // check error
+	assert.Nil(t, err)                                              // check response form error
+	assert.Equal(t, response["error"][0], errors.PasswordEmptyCode) // check error
 }
 
 func TestPublicKeyEmpty(t *testing.T) {
@@ -320,8 +320,8 @@ func TestPublicKeyEmpty(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)                                           // check response form error
-	assert.Equal(t, response["error"][0], errors.PublicKeyEmpty) // check error
+	assert.Nil(t, err)                                               // check response form error
+	assert.Equal(t, response["error"][0], errors.PublicKeyEmptyCode) // check error
 }
 
 func TestCleanup(t *testing.T) {
