@@ -13,6 +13,11 @@ import (
 // AuthenticateJWT is a middlware for the endpoints that requires authentication
 func AuthenticateJWT(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
+	if authHeader == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"detail": "No authorization header."})
+		c.Abort()
+		return
+	}
 
 	if authHeader[:7] != "Bearer " {
 		c.JSON(http.StatusUnauthorized, gin.H{"msg": "Only Bearer token is available"})
