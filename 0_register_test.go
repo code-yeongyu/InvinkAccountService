@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -10,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 
 	"invink/account-service/errors"
@@ -49,7 +51,17 @@ LQIDAQAB
 -----END PUBLIC KEY-----`
 }
 
+func cleanUp(db *gorm.DB) {
+	db.DropTable(&models.User{})
+	db.DropTable("follower")
+	db.DropTable("following")
+	os.Setenv("ACCOUNT_DB_DBNAME", DBNAMEORIGIN)
+	os.Setenv("ACCOUNT_DB_DBNAME", "testing_db")
+}
+
 func TestProperReuqest(t *testing.T) {
+	db := models.Setup()
+	cleanUp(db)
 	form := &forms.Registration{
 		Email:     ExampleEmail,
 		Username:  ExampleUsername,
@@ -278,9 +290,5 @@ func TestPublicKeyEmpty(t *testing.T) {
 
 func TestCleanupForRegistration(t *testing.T) {
 	db := models.Setup()
-	db.DropTable(&models.User{})
-	db.DropTable("followed_by")
-	db.DropTable("following")
-	os.Setenv("ACCOUNT_DB_DBNAME", DBNAMEORIGIN)
-	os.Setenv("ACCOUNT_DB_DBNAME", "testing_db")
+	cleanUp(db)
 }

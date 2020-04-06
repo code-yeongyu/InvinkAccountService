@@ -141,9 +141,5 @@ func TestWrongInfoAuthRequest(t *testing.T) {
 
 func TestCleanupForAuthentication(t *testing.T) {
 	db := models.Setup()
-	db.DropTable(&models.User{})
-	db.DropTable("followed_by")
-	db.DropTable("following")
-	os.Setenv("ACCOUNT_DB_DBNAME", DBNAMEORIGIN)
-	os.Setenv("ACCOUNT_DB_DBNAME", "testing_db")
+	cleanUp(db)
 }
