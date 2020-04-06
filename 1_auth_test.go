@@ -13,7 +13,7 @@ import (
 	"invink/account-service/models"
 )
 
-func createUser(username string) {
+func createUser(email string, username string, password string, nickname string, bio string) {
 	PUBLICKEY = `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhTGv0frCyyhs3Xs5LyHE
 4NXcM5lMqGJGNqCBo6zzjgv5BtZE5/bUHmJ8moUwTLLehtQt+wLq51wyJLe36142
@@ -25,12 +25,16 @@ LQIDAQAB
 -----END PUBLIC KEY-----`
 
 	form := &forms.Registration{
-		Email:     "test@example.com",
+		Email:     email,
 		Username:  username,
-		Password:  "A-maz1ng*pass",
+		Password:  password,
 		PublicKey: PUBLICKEY,
-		Nickname:  "AmazingMengmota",
-		Bio:       "Hi, I'm the great Mengmota",
+	}
+	if nickname != "" {
+		form.Nickname = nickname
+	}
+	if bio != "" {
+		form.Bio = bio
 	}
 	formJSON, _ := json.Marshal(form)
 	performRequest(ROUTER, "POST", "/register",
@@ -52,14 +56,14 @@ Kt8yVspTqyhnMnTNQnmGG7TuVCnWPXWaBaI/Aozgilj3+BIo9SiUIqKfc0FPeV61
 LQIDAQAB
 -----END PUBLIC KEY-----`
 
-	createUser("testuser")
+	createUser(ExampleEmail, ExampleUsername, ExamplePassword, "", "")
 }
 
 func TestProperEmailAuthRequest(t *testing.T) {
 	var response map[string]string
 	form := &forms.Authentication{
-		ID:       "test@example.com",
-		Password: "A-maz1ng*pass",
+		ID:       ExampleEmail,
+		Password: ExamplePassword,
 	}
 	formJSON, _ := json.Marshal(form)
 	w := performRequest(ROUTER, "POST", "/auth",
@@ -74,8 +78,8 @@ func TestProperEmailAuthRequest(t *testing.T) {
 func TestProperUsernameAuthRequest(t *testing.T) {
 	var response map[string]string
 	form := &forms.Authentication{
-		ID:       "testuser",
-		Password: "A-maz1ng*pass",
+		ID:       ExampleUsername,
+		Password: ExamplePassword,
 	}
 	formJSON, _ := json.Marshal(form)
 	w := performRequest(ROUTER, "POST", "/auth",
@@ -90,7 +94,7 @@ func TestProperUsernameAuthRequest(t *testing.T) {
 func TestWrongUsernameAuthRequest(t *testing.T) {
 	form := &forms.Authentication{
 		ID:       "wrong_user",
-		Password: "A-maz1ng*pass",
+		Password: ExamplePassword,
 	}
 	formJSON, _ := json.Marshal(form)
 	w := performRequest(ROUTER, "POST", "/auth",
@@ -113,7 +117,7 @@ func TestProperUsernameWrongPasswordAuthRequest(t *testing.T) {
 
 func TestProperEmailWrongPasswordAuthRequest(t *testing.T) {
 	form := &forms.Authentication{
-		ID:       "test@example.com",
+		ID:       ExampleEmail,
 		Password: "12345678",
 	}
 	formJSON, _ := json.Marshal(form)
