@@ -84,6 +84,7 @@ func TestMyEmptyBioProfileRequest(t *testing.T) {
 	assert.Nil(t, response["picture_url"])
 	assert.Equal(t, []interface{}{}, response["following_username"])
 	assert.Equal(t, []interface{}{}, response["follower_username"])
+	assert.NotNil(t, response["public_key"])
 	assert.Equal(t, "{}", response["my_keys"])
 }
 func TestMyEmptyNicknameProfileRequest(t *testing.T) {
@@ -106,6 +107,7 @@ func TestMyEmptyNicknameProfileRequest(t *testing.T) {
 	assert.Nil(t, response["picture_url"])
 	assert.Equal(t, []interface{}{}, response["following_username"])
 	assert.Equal(t, []interface{}{}, response["follower_username"])
+	assert.NotNil(t, response["public_key"])
 	assert.Equal(t, "{}", response["my_keys"])
 }
 func TestOtherUserRequest(t *testing.T) {
@@ -131,6 +133,18 @@ func TestOtherUserRequest(t *testing.T) {
 
 	assert.Nil(t, response["email"])
 	assert.Nil(t, response["my_keys"])
+	// should nil
+}
+
+func Test404ProfileRequest(t *testing.T) {
+	w := performRequestWithHeader(
+		ROUTER,
+		"GET",
+		"/profile/nothing/",
+		AUTHHEADER[0],
+		nil,
+	)
+	assert.Equal(t, http.StatusNotFound, w.Code)
 	// should nil
 }
 
