@@ -37,7 +37,7 @@ func (ctrler *Controller) AuthUser(c *gin.Context) {
 	}
 
 	if err := db.Where("email = ? OR username = ?", inputForm.ID, inputForm.ID).First(&user).Error; err != nil {
-		abortWith400ErrorResponse(c, errors.EmailExistsCode)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to authenticate."})
 		return
 	} // checking ID
 
@@ -46,7 +46,7 @@ func (ctrler *Controller) AuthUser(c *gin.Context) {
 		return
 	}
 
-	expirationTime := time.Now().Add(5 * time.Minute)
+	expirationTime := time.Now().Add(15 * time.Minute)
 
 	claims := &models.Claims{
 		Username: user.Username,
