@@ -23,7 +23,7 @@ func setupRoutes(r *gin.Engine) {
 	profile := r.Group("/profile")
 	profile.Use(middlewares.AuthenticateJWT)
 	{
-		profile.GET("/", c.GetMyUsername)
+		profile.GET("/", c.GetMyProfile)
 		profile.GET("/:username/", c.GetProfileByUsername)
 		profile.PATCH("/:username", nil)
 		profile.DELETE("/:username", nil)
