@@ -135,7 +135,6 @@ func TestOtherUserRequest(t *testing.T) {
 	assert.Nil(t, response["my_keys"])
 	// should nil
 }
-
 func Test404ProfileRequest(t *testing.T) {
 	w := performRequestWithHeader(
 		ROUTER,
@@ -146,6 +145,15 @@ func Test404ProfileRequest(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusNotFound, w.Code)
 	// should nil
+}
+func TestNoAuthorizationRequest(t *testing.T) {
+	w := performRequest(
+		ROUTER,
+		"GET",
+		"/profile/test1/",
+		nil,
+	)
+	assert.Equal(t, http.StatusUnauthorized, w.Code)
 }
 
 // test get profile
