@@ -15,7 +15,7 @@ func main() {
 	docs.SwaggerInfo.Host = "possibly invink.org"
 	docs.SwaggerInfo.BasePath = "/v1"
 	docs.SwaggerInfo.Schemes = []string{"https"}
-	setupServer().Run()
+	setupServer().Run(":3000")
 }
 
 func setupServer() *gin.Engine {
