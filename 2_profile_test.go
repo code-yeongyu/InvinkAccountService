@@ -178,6 +178,10 @@ func TestProperUsernameProfilePatchRequest(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusOK, w.Code)
 	// change username to changer
+	AUTHHEADER[0] = map[string]string{
+		"Authorization": fmt.Sprintf("Bearer %s", getToken("changer", ExamplePassword)),
+	}
+	// update the token since the username has changed
 
 	w = performRequestWithHeader(
 		ROUTER,
@@ -230,66 +234,6 @@ func TestImProperUsernameProfilePatchRequest(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, errors.UsernameFormatErrorCode, int(response["error"].(float64)))
 }
-
-func TestProperPasswordProfilePatchRequest(t *testing.T) {
-	form := &forms.Profile{
-		Password:        "changed" + ExamplePassword,
-		CurrentPassword: ExamplePassword,
-	}
-	formJSON, _ := json.Marshal(form)
-	w := performRequestWithHeader(
-		ROUTER,
-		"PATCH",
-		"/profile/",
-		AUTHHEADER[1],
-		strings.NewReader(string(formJSON)),
-	)
-	assert.Equal(t, http.StatusOK, w.Code)
-	// change password
-
-	assert.NotNil(t, getToken("test2", "changed"+ExamplePassword))
-	// authenticate with the changed password
-} // here changes test2's password to "changed" + ExamplePassword
-func TestTooShortPasswordProfilePatchRequest(t *testing.T) {
-	var response map[string]interface{}
-	form := &forms.Profile{
-		Password:        "aA-0",
-		CurrentPassword: ExamplePassword,
-	}
-	formJSON, _ := json.Marshal(form)
-	w := performRequestWithHeader(
-		ROUTER,
-		"PATCH",
-		"/profile/",
-		AUTHHEADER[0],
-		strings.NewReader(string(formJSON)),
-	)
-	assert.Equal(t, http.StatusBadRequest, w.Code)
-	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)
-	assert.Equal(t, errors.PasswordTooShortCode, int(response["error"].(float64)))
-
-}
-func TestVulerablePasswordProfilePatchRequest(t *testing.T) {
-	var response map[string]interface{}
-	form := &forms.Profile{
-		Password:        "12345678",
-		CurrentPassword: ExamplePassword,
-	}
-	formJSON, _ := json.Marshal(form)
-	w := performRequestWithHeader(
-		ROUTER,
-		"PATCH",
-		"/profile/",
-		AUTHHEADER[0],
-		strings.NewReader(string(formJSON)),
-	)
-	assert.Equal(t, http.StatusBadRequest, w.Code)
-	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)
-	assert.Equal(t, errors.PasswordVulnerableErrorCode, int(response["error"].(float64)))
-}
-
 func TestProperNicknameProfilePatchRequest(t *testing.T) {
 	var response map[string]interface{}
 	form := &forms.Profile{
@@ -379,7 +323,7 @@ func TestProperNicknameEmailProfilePatchRequest(t *testing.T) {
 	assert.Equal(t, "JOBS", response["nickname"].(string))
 	assert.Equal(t, ExampleEmail, response["email"].(string))
 }
-func TestMyProfileNicknameBioPatchRequest(t *testing.T) {
+func TestProperNicknameBioProfilePatchRequest(t *testing.T) {
 	var response map[string]interface{}
 	form := map[string]interface{}{
 		"nickname":         "thegreatmengmota",
@@ -409,6 +353,65 @@ func TestMyProfileNicknameBioPatchRequest(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, "thegreatmengmota", response["nickname"].(string))
 	assert.Equal(t, "This is bio.", response["bio"].(string))
+}
+
+func TestProperPasswordProfilePatchRequest(t *testing.T) {
+	form := &forms.Profile{
+		Password:        "changed" + ExamplePassword,
+		CurrentPassword: ExamplePassword,
+	}
+	formJSON, _ := json.Marshal(form)
+	w := performRequestWithHeader(
+		ROUTER,
+		"PATCH",
+		"/profile/",
+		AUTHHEADER[1],
+		strings.NewReader(string(formJSON)),
+	)
+	assert.Equal(t, http.StatusOK, w.Code)
+	// change password
+
+	assert.NotNil(t, getToken("test2", "changed"+ExamplePassword))
+	// authenticate with the changed password
+} // here changes test2's password to "changed" + ExamplePassword
+func TestTooShortPasswordProfilePatchRequest(t *testing.T) {
+	var response map[string]interface{}
+	form := &forms.Profile{
+		Password:        "aA-0",
+		CurrentPassword: ExamplePassword,
+	}
+	formJSON, _ := json.Marshal(form)
+	w := performRequestWithHeader(
+		ROUTER,
+		"PATCH",
+		"/profile/",
+		AUTHHEADER[0],
+		strings.NewReader(string(formJSON)),
+	)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	err := json.Unmarshal([]byte(w.Body.String()), &response)
+	assert.Nil(t, err)
+	assert.Equal(t, errors.PasswordTooShortCode, int(response["error"].(float64)))
+
+}
+func TestVulerablePasswordProfilePatchRequest(t *testing.T) {
+	var response map[string]interface{}
+	form := &forms.Profile{
+		Password:        "12345678",
+		CurrentPassword: ExamplePassword,
+	}
+	formJSON, _ := json.Marshal(form)
+	w := performRequestWithHeader(
+		ROUTER,
+		"PATCH",
+		"/profile/",
+		AUTHHEADER[0],
+		strings.NewReader(string(formJSON)),
+	)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	err := json.Unmarshal([]byte(w.Body.String()), &response)
+	assert.Nil(t, err)
+	assert.Equal(t, errors.PasswordVulnerableErrorCode, int(response["error"].(float64)))
 }
 
 /*
