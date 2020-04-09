@@ -24,7 +24,7 @@ func setupRoutes(r *gin.Engine) {
 	profile.Use(middlewares.AuthenticateJWT)
 	{
 		profile.GET("/", c.GetMyProfile)
-		profile.PATCH("/", nil)
+		profile.PATCH("/", c.UpdateMyProfile)
 		profile.DELETE("/", nil)
 		profile.DELETE("/:username/:field_name", nil)
 		profile.GET("/:username/", c.GetProfileByUsername)
