@@ -191,7 +191,11 @@ func (ctrler *Controller) UpdateMyProfile(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} EmptyResponse "No errors occurred, profile was successfully removed"
 // @Failure 400 {object} TypicalErrorResponse "Wrong password"
+<<<<<<< HEAD
 // @Router /profile/ [delete]
+=======
+// @Router /profile/ [patch]
+>>>>>>> 3f32be481b67952a0423cf29d441cd5f50adb780
 func (ctrler *Controller) RemoveMyProfile(c *gin.Context) {
 	var inputForm forms.Profile
 	username := c.MustGet("username").(string)
