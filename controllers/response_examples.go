@@ -5,7 +5,7 @@ type EmptyResponse struct {
 }
 
 // EmailExistsResponse Example
-type EmailExistsResponse struct {
+type TypicalErrorResponse struct {
 	Code    int
 	Message string `json:"msg"`
 }
