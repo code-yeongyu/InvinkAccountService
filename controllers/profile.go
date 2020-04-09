@@ -185,8 +185,30 @@ func (ctrler *Controller) UpdateMyProfile(c *gin.Context) {
 	c.Data(http.StatusOK, gin.MIMEHTML, nil)
 }
 
+// RemoveMyProfile godoc
+// @Summary Update my profile
+// @Description Update my profile with given information
+// @Produce json
+// @Success 200 {object} EmptyResponse "No errors occurred, profile was successfully removed"
+// @Failure 400 {object} TypicalErrorResponse "Wrong password"
+// @Router /profile/ [patch]
 func (ctrler *Controller) RemoveMyProfile(c *gin.Context) {
+	var inputForm forms.Profile
 	username := c.MustGet("username").(string)
 	db := c.MustGet("db").(*gorm.DB)
+	profile, _ := getProfile(db, username)
+	if err := c.ShouldBindJSON(&inputForm); err != nil {
+		errorCode := errors.FormErrorCode
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": errorCode, "msg": errors.Messages[errorCode], "detail": err.Error()})
+		return
+	}
+	if bcrypt.CompareHashAndPassword([]byte(profile.Password), []byte(inputForm.CurrentPassword)) != nil {
+		errorCode := errors.AuthenticationFailureCode
+		c.JSON(http.StatusBadRequest, gin.H{"error": errorCode, "msg": errors.Messages[errorCode]})
+		return
+	}
 
+	db.Where("username = ?", username).Delete(models.User{})
+
+	c.Data(http.StatusOK, gin.MIMEHTML, nil)
 }
