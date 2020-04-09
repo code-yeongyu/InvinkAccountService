@@ -1,26 +1,29 @@
 package middlewares
 
 import (
+	"invink/account-service/errors"
+	"invink/account-service/models"
 	"net/http"
 	"os"
 
-	"invink/account-service/models"
-
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 )
 
 // AuthenticateJWT is a middlware for the endpoints that requires authentication
 func AuthenticateJWT(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
 	if authHeader == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{"detail": "No authorization header."})
+		errorCode := errors.EmptyAuthorizationHeaderCode
+		c.JSON(http.StatusUnauthorized, gin.H{"error": errorCode, "msg": errors.Messages[errorCode]})
 		c.Abort()
 		return
 	}
 
 	if authHeader[:7] != "Bearer " {
-		c.JSON(http.StatusUnauthorized, gin.H{"msg": "Only Bearer token is available"})
+		errorCode := errors.WrongTokenTypeCode
+		c.JSON(http.StatusUnauthorized, gin.H{"error": errorCode, "msg": errors.Messages[errorCode]})
 		c.Abort()
 		return
 	}
@@ -37,7 +40,18 @@ func AuthenticateJWT(c *gin.Context) {
 	)
 
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"detail": err.Error()})
+		errorCode := errors.AuthenticationFailureCode
+		c.JSON(http.StatusUnauthorized, gin.H{"error": errorCode, "msg": errors.Messages[errorCode], "detail": err.Error()})
+		c.Abort()
+		return
+	}
+
+	db := c.MustGet("db").(*gorm.DB)
+
+	var tempUser models.User
+	if err := db.Where("username = ?", claims.Username).First(&tempUser).Error; err != nil {
+		errorCode := errors.AuthenticationFailureCode
+		c.JSON(http.StatusUnauthorized, gin.H{"error": errorCode, "msg": errors.Messages[errorCode], "detail": "Username has changed, therefore you have to refresh your token"})
 		c.Abort()
 		return
 	}

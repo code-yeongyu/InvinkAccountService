@@ -184,3 +184,9 @@ func (ctrler *Controller) UpdateMyProfile(c *gin.Context) {
 
 	c.Data(http.StatusOK, gin.MIMEHTML, nil)
 }
+
+func (ctrler *Controller) RemoveMyProfile(c *gin.Context) {
+	username := c.MustGet("username").(string)
+	db := c.MustGet("db").(*gorm.DB)
+
+}
