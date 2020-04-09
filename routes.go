@@ -25,9 +25,8 @@ func setupRoutes(r *gin.Engine) {
 	{
 		profile.GET("/", c.GetMyProfile)
 		profile.PATCH("/", c.UpdateMyProfile)
-		profile.DELETE("/", nil)
+		profile.DELETE("/", c.RemoveMyProfile)
 		profile.DELETE("/:username/:field_name", nil)
 		profile.GET("/:username/", c.GetProfileByUsername)
 	}
-
 }
