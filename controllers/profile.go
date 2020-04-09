@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"invink/account-service/errors"
+	"invink/account-service/forms"
 	"invink/account-service/models"
 	"strings"
 	"unicode"
@@ -10,11 +12,12 @@ import (
 	"github.com/fatih/structs"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func getProfile(db *gorm.DB, username string) (user models.User, err error) {
 	err = db.Where("username = ?", username).First(&user).Error
-	return user, err
+	return
 }
 
 func modelToMyProfileMap(profile models.User) (myProfileMap map[string]interface{}) {
@@ -99,7 +102,7 @@ func (ctrler *Controller) GetMyProfile(c *gin.Context) {
 // @Description Get a profile by username with given information
 // @Produce json
 // @Success 200 {object} PublicProfileResponse "When request to other's profile"
-// @Failure 404
+// @Failure 404 {object} EmptyResponse "No such user"
 // @Router /profile/:username [get]
 func (ctrler *Controller) GetProfileByUsername(c *gin.Context) {
 	username := c.Param("username")
@@ -117,4 +120,67 @@ func (ctrler *Controller) GetProfileByUsername(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, modelToPublicProfileMap(profile))
+}
+
+// UpdateMyProfile godoc
+// @Summary Update my profile
+// @Description Update my profile with given information
+// @Produce json
+// @Success 200 {object} EmptyResponse "No errors occurred, profile was successfully updated"
+// @Failure 400 {object} TypicalErrorResponse "Wrong format or invalid information"
+// @Router /profile/ [patch]
+func (ctrler *Controller) UpdateMyProfile(c *gin.Context) {
+	var profile models.User
+	var inputForm forms.Profile
+	username := c.MustGet("username").(string)
+	db := c.MustGet("db").(*gorm.DB)
+
+	if err := c.ShouldBindJSON(&inputForm); err != nil {
+		errorCode := errors.FormErrorCode
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": errorCode, "msg": errors.Messages[errorCode], "detail": err.Error()})
+		return
+	}
+
+	profile, _ = getProfile(db, username)
+
+	if bcrypt.CompareHashAndPassword([]byte(profile.Password), []byte(inputForm.CurrentPassword)) != nil {
+		errorCode := errors.AuthenticationFailureCode
+		c.JSON(http.StatusBadRequest, gin.H{"error": errorCode, "msg": errors.Messages[errorCode]})
+		return
+	}
+	// checking current_password
+
+	if inputForm.Username != "" {
+		if errorCode := validateUsername(db, inputForm.Username); errorCode != -1 {
+			abortWith400ErrorResponse(c, errorCode)
+			return
+		}
+		profile.Username = inputForm.Username
+	}
+	if inputForm.Password != "" {
+		if errorCode := validatePassword(inputForm.Password); errorCode != -1 {
+			abortWith400ErrorResponse(c, errorCode)
+			return
+		}
+		passwordHash, _ := bcrypt.GenerateFromPassword([]byte(inputForm.Password), 15)
+		profile.Password = string(passwordHash)
+	}
+	if inputForm.Nickname != "" {
+		profile.Nickname = inputForm.Nickname
+	}
+	if inputForm.PictureURL != "" {
+		profile.PictureURL = inputForm.PictureURL
+	}
+	if inputForm.Bio != "" {
+		profile.Bio = inputForm.Bio
+	}
+	if inputForm.MyKeys != "" {
+		// logics about checking whether the user actually has the following keys from the following user
+		// should be placed here
+		profile.MyKeys = inputForm.MyKeys
+	}
+
+	db.Save(&profile)
+
+	c.Data(http.StatusOK, gin.MIMEHTML, nil)
 }
