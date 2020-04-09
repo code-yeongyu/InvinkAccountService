@@ -14,4 +14,6 @@ var Messages = map[int]string{
 	PasswordVulnerableErrorCode: "Password is vulnerable.",
 
 	PublicKeyErrorCode: "Not a proper public key.",
+
+	AuthenticationFailureCode: "Authentication Failed.",
 }

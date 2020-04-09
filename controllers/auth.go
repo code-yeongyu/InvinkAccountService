@@ -37,12 +37,14 @@ func (ctrler *Controller) AuthUser(c *gin.Context) {
 	}
 
 	if err := db.Where("email = ? OR username = ?", inputForm.ID, inputForm.ID).First(&user).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to authenticate."})
+		errorCode := errors.AuthenticationFailureCode
+		c.JSON(http.StatusBadRequest, gin.H{"error": errorCode, "msg": errors.Messages[errorCode]})
 		return
 	} // checking ID
 
 	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(inputForm.Password)) != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to authenticate."})
+		errorCode := errors.AuthenticationFailureCode
+		c.JSON(http.StatusBadRequest, gin.H{"error": errorCode, "msg": errors.Messages[errorCode]})
 		return
 	}
 

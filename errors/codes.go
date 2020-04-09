@@ -13,4 +13,6 @@ const (
 	PasswordVulnerableErrorCode = 302
 
 	PublicKeyErrorCode = 402
+
+	AuthenticationFailureCode = 500
 )
