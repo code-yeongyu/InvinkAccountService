@@ -64,6 +64,27 @@
                     "404": {}
                 }
             },
+            "delete": {
+                "description": "Update my profile with given information",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Update my profile",
+                "responses": {
+                    "200": {
+                        "description": "No errors occurred, profile was successfully removed",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.EmptyResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Wrong password",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.TypicalErrorResponse"
+                        }
+                    }
+                }
+            },
             "patch": {
                 "description": "Update my profile with given information",
                 "produces": [

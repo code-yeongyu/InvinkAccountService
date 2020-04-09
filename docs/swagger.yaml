@@ -111,6 +111,20 @@ paths:
             $ref: '#/definitions/controllers.TypicalErrorResponse'
       summary: Authenticate an user
   /profile/:
+    delete:
+      description: Update my profile with given information
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No errors occurred, profile was successfully removed
+          schema:
+            $ref: '#/definitions/controllers.EmptyResponse'
+        "400":
+          description: Wrong password
+          schema:
+            $ref: '#/definitions/controllers.TypicalErrorResponse'
+      summary: Update my profile
     get:
       description: Get a requested user's profile
       produces:
