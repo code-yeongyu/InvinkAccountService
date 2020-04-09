@@ -14,5 +14,7 @@ const (
 
 	PublicKeyErrorCode = 402
 
-	AuthenticationFailureCode = 500
+	AuthenticationFailureCode    = 500
+	EmptyAuthorizationHeaderCode = 501
+	WrongTokenTypeCode           = 502
 )
