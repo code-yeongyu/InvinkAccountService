@@ -499,12 +499,12 @@ func TestProperProfileDeleteRequest(t *testing.T) {
 		AUTHHEADER[1],
 		strings.NewReader(string(formJSON)),
 	)
-	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, http.StatusOK, w.Code)
 
 	w = performRequestWithHeader(
 		ROUTER,
 		"GET",
-		"/profile/test2",
+		"/profile/test2/",
 		AUTHHEADER[0],
 		strings.NewReader(string(formJSON)),
 	)
