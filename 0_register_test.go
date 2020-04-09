@@ -35,6 +35,13 @@ const ExamplePassword = "A-maz1ng*pass"
 const ExampleNickname = "AmazingMengmota"
 const ExampleBio = "Hi, I'm the great Mengmota"
 
+func cleanUp(db *gorm.DB) {
+	db.DropTable(&models.User{})
+	db.DropTable("follower")
+	db.DropTable("following")
+	os.Setenv("ACCOUNT_DB_DBNAME", DBNAMEORIGIN)
+	os.Setenv("ACCOUNT_DB_DBNAME", "testing_db")
+}
 func TestInitiateForRegistration(t *testing.T) {
 	DBNAMEORIGIN = os.Getenv("ACCOUNT_DB_DBNAME")
 	os.Setenv("ACCOUNT_DB_DBNAME", "testing_db")
@@ -48,14 +55,6 @@ DGogIrljdcLPzdlIcH9QjQJaWnfL7usl546aU0gkKjlUcB5+HUPNPkN3z9LEouHi
 Kt8yVspTqyhnMnTNQnmGG7TuVCnWPXWaBaI/Aozgilj3+BIo9SiUIqKfc0FPeV61
 LQIDAQAB
 -----END PUBLIC KEY-----`
-}
-
-func cleanUp(db *gorm.DB) {
-	db.DropTable(&models.User{})
-	db.DropTable("follower")
-	db.DropTable("following")
-	os.Setenv("ACCOUNT_DB_DBNAME", DBNAMEORIGIN)
-	os.Setenv("ACCOUNT_DB_DBNAME", "testing_db")
 }
 
 func TestProperReuqest(t *testing.T) {

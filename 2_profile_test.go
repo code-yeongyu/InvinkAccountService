@@ -12,6 +12,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"invink/account-service/errors"
 	"invink/account-service/forms"
 	"invink/account-service/models"
 )
@@ -38,8 +39,11 @@ func getToken(ID string, password string) string {
 	w := performRequest(ROUTER, "POST", "/auth",
 		strings.NewReader(string(formJSON)),
 	)
-	json.Unmarshal([]byte(w.Body.String()), &response)
-	return response["token"]
+	if w.Code == 200 {
+		json.Unmarshal([]byte(w.Body.String()), &response)
+		return response["token"]
+	}
+	return ""
 }
 
 func TestInitiateForProfile(t *testing.T) {
@@ -156,37 +160,265 @@ func TestNoAuthorizationRequest(t *testing.T) {
 	assert.Equal(t, http.StatusUnauthorized, w.Code)
 }
 
-// test get profile
+// test getting profile
 
-func TestMyProfileUsernamePatchRequest(t *testing.T) {
-	// try to change username, should fail
+func TestProperUsernameProfilePatchRequest(t *testing.T) {
+	var response map[string]interface{}
+	form := &forms.Profile{
+		Username:        "changer",
+		CurrentPassword: ExamplePassword,
+	}
+	formJSON, _ := json.Marshal(form)
+	w := performRequestWithHeader(
+		ROUTER,
+		"PATCH",
+		"/profile/",
+		AUTHHEADER[0],
+		strings.NewReader(string(formJSON)),
+	)
+	assert.Equal(t, http.StatusOK, w.Code)
+	// change username to changer
+
+	w = performRequestWithHeader(
+		ROUTER,
+		"GET",
+		"/profile/",
+		AUTHHEADER[0],
+		nil,
+	)
+	assert.Equal(t, http.StatusOK, w.Code)
+	err := json.Unmarshal([]byte(w.Body.String()), &response)
+	assert.Nil(t, err)
+	assert.Equal(t, "changer", response["username"].(string))
+	// check whether the username has changed
+} // here changes test1's username to changer
+func TestDuplicateUsernameProfilePatchRequest(t *testing.T) {
+	var response map[string]interface{}
+	form := &forms.Profile{
+		Username:        "test2",
+		CurrentPassword: ExamplePassword,
+	}
+	formJSON, _ := json.Marshal(form)
+	w := performRequestWithHeader(
+		ROUTER,
+		"PATCH",
+		"/profile/",
+		AUTHHEADER[0],
+		strings.NewReader(string(formJSON)),
+	)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	err := json.Unmarshal([]byte(w.Body.String()), &response)
+	assert.Nil(t, err)
+	assert.Equal(t, errors.UsernameExistsCode, int(response["error"].(float64)))
 }
-func TestMyProfileEmailPatchRequest(t *testing.T) {
-	// try to change email, should fail
+func TestImProperUsernameProfilePatchRequest(t *testing.T) {
+	var response map[string]interface{}
+	form := &forms.Profile{
+		Username:        "test user",
+		CurrentPassword: ExamplePassword,
+	}
+	formJSON, _ := json.Marshal(form)
+	w := performRequestWithHeader(
+		ROUTER,
+		"PATCH",
+		"/profile/",
+		AUTHHEADER[0],
+		strings.NewReader(string(formJSON)),
+	)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	err := json.Unmarshal([]byte(w.Body.String()), &response)
+	assert.Nil(t, err)
+	assert.Equal(t, errors.UsernameFormatErrorCode, int(response["error"].(float64)))
 }
-func TestMyProfilePasswordPatchRequest(t *testing.T) {
-	// try to change pass, should success
+
+func TestProperPasswordProfilePatchRequest(t *testing.T) {
+	form := &forms.Profile{
+		Password:        "changed" + ExamplePassword,
+		CurrentPassword: ExamplePassword,
+	}
+	formJSON, _ := json.Marshal(form)
+	w := performRequestWithHeader(
+		ROUTER,
+		"PATCH",
+		"/profile/",
+		AUTHHEADER[1],
+		strings.NewReader(string(formJSON)),
+	)
+	assert.Equal(t, http.StatusOK, w.Code)
+	// change password
+
+	assert.NotNil(t, getToken("test2", "changed"+ExamplePassword))
+	// authenticate with the changed password
+} // here changes test2's password to "changed" + ExamplePassword
+func TestTooShortPasswordProfilePatchRequest(t *testing.T) {
+	var response map[string]interface{}
+	form := &forms.Profile{
+		Password:        "aA-0",
+		CurrentPassword: ExamplePassword,
+	}
+	formJSON, _ := json.Marshal(form)
+	w := performRequestWithHeader(
+		ROUTER,
+		"PATCH",
+		"/profile/",
+		AUTHHEADER[0],
+		strings.NewReader(string(formJSON)),
+	)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	err := json.Unmarshal([]byte(w.Body.String()), &response)
+	assert.Nil(t, err)
+	assert.Equal(t, errors.PasswordTooShortCode, int(response["error"].(float64)))
+
 }
-func TestMyProfileNicknamePatchRequest(t *testing.T) {
-	// try to change nickname, should success
+func TestVulerablePasswordProfilePatchRequest(t *testing.T) {
+	var response map[string]interface{}
+	form := &forms.Profile{
+		Password:        "12345678",
+		CurrentPassword: ExamplePassword,
+	}
+	formJSON, _ := json.Marshal(form)
+	w := performRequestWithHeader(
+		ROUTER,
+		"PATCH",
+		"/profile/",
+		AUTHHEADER[0],
+		strings.NewReader(string(formJSON)),
+	)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	err := json.Unmarshal([]byte(w.Body.String()), &response)
+	assert.Nil(t, err)
+	assert.Equal(t, errors.PasswordVulnerableErrorCode, int(response["error"].(float64)))
 }
-func TestMyProfileBioPatchRequest(t *testing.T) {
-	// try to change bio should, success
+
+func TestProperNicknameProfilePatchRequest(t *testing.T) {
+	var response map[string]interface{}
+	form := &forms.Profile{
+		Nickname:        "the game changer",
+		CurrentPassword: ExamplePassword,
+	}
+	formJSON, _ := json.Marshal(form)
+	w := performRequestWithHeader(
+		ROUTER,
+		"PATCH",
+		"/profile/",
+		AUTHHEADER[0],
+		strings.NewReader(string(formJSON)),
+	)
+	assert.Equal(t, http.StatusOK, w.Code)
+	// change username to changer
+
+	w = performRequestWithHeader(
+		ROUTER,
+		"GET",
+		"/profile/",
+		AUTHHEADER[0],
+		nil,
+	)
+	assert.Equal(t, http.StatusOK, w.Code)
+	err := json.Unmarshal([]byte(w.Body.String()), &response)
+	assert.Nil(t, err)
+	assert.Equal(t, "the game changer", response["nickname"].(string))
 }
-func TestMyProfilePicturePatchRequest(t *testing.T) {
-	// try to change picture should, success
+func TestProperBioProfilePatchRequest(t *testing.T) {
+	var response map[string]interface{}
+	form := &forms.Profile{
+		Bio:             "Think different.",
+		CurrentPassword: ExamplePassword,
+	}
+	formJSON, _ := json.Marshal(form)
+	w := performRequestWithHeader(
+		ROUTER,
+		"PATCH",
+		"/profile/",
+		AUTHHEADER[0],
+		strings.NewReader(string(formJSON)),
+	)
+	assert.Equal(t, http.StatusOK, w.Code)
+	// change username to changer
+
+	w = performRequestWithHeader(
+		ROUTER,
+		"GET",
+		"/profile/",
+		AUTHHEADER[0],
+		nil,
+	)
+	assert.Equal(t, http.StatusOK, w.Code)
+	err := json.Unmarshal([]byte(w.Body.String()), &response)
+	assert.Nil(t, err)
+	assert.Equal(t, "Think different.", response["bio"].(string))
 }
-func TestMyProfileNicknameEmailPatchRequest(t *testing.T) {
-	// try to change nickname and Email, only nickname should be changed
+func TestProperNicknameEmailProfilePatchRequest(t *testing.T) {
+	var response map[string]interface{}
+	form := map[string]interface{}{
+		"nickname":         "JOBS",
+		"email":            "email@example.com",
+		"current_password": ExamplePassword,
+	}
+	formJSON, _ := json.Marshal(form)
+	w := performRequestWithHeader(
+		ROUTER,
+		"PATCH",
+		"/profile/",
+		AUTHHEADER[0],
+		strings.NewReader(string(formJSON)),
+	)
+	assert.Equal(t, http.StatusOK, w.Code)
+	// change username to changer
+
+	w = performRequestWithHeader(
+		ROUTER,
+		"GET",
+		"/profile/",
+		AUTHHEADER[0],
+		nil,
+	)
+	assert.Equal(t, http.StatusOK, w.Code)
+	err := json.Unmarshal([]byte(w.Body.String()), &response)
+	assert.Nil(t, err)
+	assert.Equal(t, "JOBS", response["nickname"].(string))
+	assert.Equal(t, ExampleEmail, response["email"].(string))
 }
 func TestMyProfileNicknameBioPatchRequest(t *testing.T) {
-	// try to change nickname and bio, both should be changed
-}
-func TestOtherUserNicknameBioPatchRequest(t *testing.T) {
-	// try to change nickname and bio, both should not be changed with 403
+	var response map[string]interface{}
+	form := map[string]interface{}{
+		"nickname":         "thegreatmengmota",
+		"bio":              "This is bio.",
+		"current_password": ExamplePassword,
+	}
+	formJSON, _ := json.Marshal(form)
+	w := performRequestWithHeader(
+		ROUTER,
+		"PATCH",
+		"/profile/",
+		AUTHHEADER[0],
+		strings.NewReader(string(formJSON)),
+	)
+	assert.Equal(t, http.StatusOK, w.Code)
+	// change username to changer
+
+	w = performRequestWithHeader(
+		ROUTER,
+		"GET",
+		"/profile/",
+		AUTHHEADER[0],
+		nil,
+	)
+	assert.Equal(t, http.StatusOK, w.Code)
+	err := json.Unmarshal([]byte(w.Body.String()), &response)
+	assert.Nil(t, err)
+	assert.Equal(t, "thegreatmengmota", response["nickname"].(string))
+	assert.Equal(t, "This is bio.", response["bio"].(string))
 }
 
 /*
+func TestProperPictureProfilePatchRequest(t *testing.T) {
+	// try to change picture should, success
+}
+
+// test updating profile
+
+
 func TestDeleteNicknameRequest(t *testing.T) {
 	w := performRequestWithHeader(
 		ROUTER,
