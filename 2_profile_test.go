@@ -392,7 +392,6 @@ func TestTooShortPasswordProfilePatchRequest(t *testing.T) {
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
 	assert.Nil(t, err)
 	assert.Equal(t, errors.PasswordTooShortCode, int(response["error"].(float64)))
-
 }
 func TestVulerablePasswordProfilePatchRequest(t *testing.T) {
 	var response map[string]interface{}
@@ -473,11 +472,45 @@ func TestEmptyBioCheck(t *testing.T) {
 
 // test update profile
 
-func TestOtherProfileDeleteRequest(t *testing.T) {
-	// delete other profile, should fail
+func TestProperProfileDeleteRequest(t *testing.T) {
+	var response map[string]interface{}
+	form := &forms.Profile{
+		CurrentPassword: ExamplePassword,
+	}
+	formJSON, _ := json.Marshal(form)
+	w := performRequestWithHeader(
+		ROUTER,
+		"DELETE",
+		"/profile/",
+		AUTHHEADER[1],
+		strings.NewReader(string(formJSON)),
+	)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+
+	w = performRequestWithHeader(
+		ROUTER,
+		"GET",
+		"/profile/test2",
+		AUTHHEADER[0],
+		strings.NewReader(string(formJSON)),
+	)
+	assert.Equal(t, http.StatusNotFound, w.Code)
 }
-func TestMyProfileDeleteRequest(t *testing.T) {
-	// delete my profile, should success
+
+func TestImProperProfileDeleteRequest(t *testing.T) {
+	var response map[string]interface{}
+	form := &forms.Profile{
+		CurrentPassword: ExamplePassword,
+	}
+	formJSON, _ := json.Marshal(form)
+	w := performRequestWithHeader(
+		ROUTER,
+		"DELETE",
+		"/profile/",
+		AUTHHEADER[1],
+		strings.NewReader(string(formJSON)),
+	)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
 }
 
 // test delete profile
