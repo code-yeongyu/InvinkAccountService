@@ -472,10 +472,24 @@ func TestEmptyBioCheck(t *testing.T) {
 
 // test update profile
 
-func TestProperProfileDeleteRequest(t *testing.T) {
-	var response map[string]interface{}
+func TestImProperProfileDeleteRequest(t *testing.T) {
 	form := &forms.Profile{
 		CurrentPassword: ExamplePassword,
+	}
+	formJSON, _ := json.Marshal(form)
+	w := performRequestWithHeader(
+		ROUTER,
+		"DELETE",
+		"/profile/",
+		AUTHHEADER[1],
+		strings.NewReader(string(formJSON)),
+	)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+}
+
+func TestProperProfileDeleteRequest(t *testing.T) {
+	form := &forms.Profile{
+		CurrentPassword: "changed" + ExamplePassword,
 	}
 	formJSON, _ := json.Marshal(form)
 	w := performRequestWithHeader(
@@ -495,22 +509,6 @@ func TestProperProfileDeleteRequest(t *testing.T) {
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusNotFound, w.Code)
-}
-
-func TestImProperProfileDeleteRequest(t *testing.T) {
-	var response map[string]interface{}
-	form := &forms.Profile{
-		CurrentPassword: ExamplePassword,
-	}
-	formJSON, _ := json.Marshal(form)
-	w := performRequestWithHeader(
-		ROUTER,
-		"DELETE",
-		"/profile/",
-		AUTHHEADER[1],
-		strings.NewReader(string(formJSON)),
-	)
-	assert.Equal(t, http.StatusBadRequest, w.Code)
 }
 
 // test delete profile
