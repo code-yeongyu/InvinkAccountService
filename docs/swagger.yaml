@@ -4,13 +4,6 @@ definitions:
       token:
         type: string
     type: object
-  controllers.EmailExistsResponse:
-    properties:
-      code:
-        type: integer
-      msg:
-        type: string
-    type: object
   controllers.EmptyResponse:
     type: object
   controllers.MyProfileResponse:
@@ -78,6 +71,13 @@ definitions:
         example: testuser
         type: string
     type: object
+  controllers.TypicalErrorResponse:
+    properties:
+      code:
+        type: integer
+      msg:
+        type: string
+    type: object
 info:
   contact: {}
   license: {}
@@ -108,7 +108,7 @@ paths:
         "400":
           description: Wrong format or invalid information
           schema:
-            $ref: '#/definitions/controllers.EmptyResponse'
+            $ref: '#/definitions/controllers.TypicalErrorResponse'
       summary: Authenticate an user
   /profile/:
     get:
@@ -122,6 +122,20 @@ paths:
             $ref: '#/definitions/controllers.MyProfileResponse'
         "404": {}
       summary: Get my profile
+    patch:
+      description: Update my profile with given information
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No errors occurred, profile was successfully updated
+          schema:
+            $ref: '#/definitions/controllers.EmptyResponse'
+        "400":
+          description: Wrong format or invalid information
+          schema:
+            $ref: '#/definitions/controllers.TypicalErrorResponse'
+      summary: Update my profile
   /profile/:username:
     get:
       description: Get a profile by username with given information
@@ -132,7 +146,10 @@ paths:
           description: When request to other's profile
           schema:
             $ref: '#/definitions/controllers.PublicProfileResponse'
-        "404": {}
+        "404":
+          description: No such user
+          schema:
+            $ref: '#/definitions/controllers.EmptyResponse'
       summary: Get a profile by username
   /register/:
     post:
@@ -178,6 +195,6 @@ paths:
         "400":
           description: Normal Form error, like username duplicate
           schema:
-            $ref: '#/definitions/controllers.EmailExistsResponse'
+            $ref: '#/definitions/controllers.TypicalErrorResponse'
       summary: Register an user
 swagger: "2.0"

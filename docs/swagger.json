@@ -41,7 +41,7 @@
                     "400": {
                         "description": "Wrong format or invalid information",
                         "schema": {
-                            "$ref": "#/definitions/controllers.EmptyResponse"
+                            "$ref": "#/definitions/controllers.TypicalErrorResponse"
                         }
                     }
                 }
@@ -63,6 +63,27 @@
                     },
                     "404": {}
                 }
+            },
+            "patch": {
+                "description": "Update my profile with given information",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Update my profile",
+                "responses": {
+                    "200": {
+                        "description": "No errors occurred, profile was successfully updated",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.EmptyResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Wrong format or invalid information",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.TypicalErrorResponse"
+                        }
+                    }
+                }
             }
         },
         "/profile/:username": {
@@ -79,7 +100,12 @@
                             "$ref": "#/definitions/controllers.PublicProfileResponse"
                         }
                     },
-                    "404": {}
+                    "404": {
+                        "description": "No such user",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.EmptyResponse"
+                        }
+                    }
                 }
             }
         },
@@ -145,7 +171,7 @@
                     "400": {
                         "description": "Normal Form error, like username duplicate",
                         "schema": {
-                            "$ref": "#/definitions/controllers.EmailExistsResponse"
+                            "$ref": "#/definitions/controllers.TypicalErrorResponse"
                         }
                     }
                 }
@@ -157,17 +183,6 @@
             "type": "object",
             "properties": {
                 "token": {
-                    "type": "string"
-                }
-            }
-        },
-        "controllers.EmailExistsResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "msg": {
                     "type": "string"
                 }
             }
@@ -252,6 +267,17 @@
                 "username": {
                     "type": "string",
                     "example": "testuser"
+                }
+            }
+        },
+        "controllers.TypicalErrorResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "msg": {
+                    "type": "string"
                 }
             }
         }
