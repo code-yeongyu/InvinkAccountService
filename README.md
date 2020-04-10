@@ -3,13 +3,13 @@
     - [ ]Email Verification
 - [ ]Email OTP
     - [ ]Creating Token
-- [ ]Profile
-    - [ ]Read Profile
-        - [ ]Read My Profile
-        - [ ]Read Other's Profile
-    - [ ]Changing Password
-    - [ ]Upload Profile Image
-    - [ ]Remove Account
+- [x]Profile
+    - [x]Read Profile
+        - [x]Read My Profile
+        - [x]Read Other's Profile
+    - [x]Changing Password
+    - [x]Upload Profile Image
+    - [x]Remove Account
 
 
 ## Process
