@@ -160,7 +160,7 @@ func TestNoAuthorizationRequest(t *testing.T) {
 	assert.Equal(t, http.StatusUnauthorized, w.Code)
 }
 
-// test getting profile
+// test getting a profile
 
 func TestProperUsernameProfilePatchRequest(t *testing.T) {
 	var response map[string]interface{}
@@ -350,7 +350,6 @@ func TestProperNicknameBioProfilePatchRequest(t *testing.T) {
 	assert.Equal(t, "thegreatmengmota", response["nickname"].(string))
 	assert.Equal(t, "This is bio.", response["bio"].(string))
 }
-
 func TestProperPasswordProfilePatchRequest(t *testing.T) {
 	form := &forms.Profile{
 		Password:        "changed" + ExamplePassword,
@@ -408,20 +407,11 @@ func TestVulerablePasswordProfilePatchRequest(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, errors.PasswordVulnerableErrorCode, int(response["error"].(float64)))
 }
-
-/*
-func TestProperPictureProfilePatchRequest(t *testing.T) {
-	// try to change picture should, success
-}
-
-// test updating profile
-
-
 func TestDeleteNicknameRequest(t *testing.T) {
 	w := performRequestWithHeader(
 		ROUTER,
 		"DELETE",
-		"/profile/test1/nickname",
+		"/profile/test1/nickname/",
 		AUTHHEADER[0],
 		nil,
 	)
@@ -431,42 +421,42 @@ func TestDeleteBioRequest(t *testing.T) {
 	w := performRequestWithHeader(
 		ROUTER,
 		"DELETE",
-		"/profile/test1/bio",
+		"/profile/test1/bio/",
 		AUTHHEADER[1],
 		nil,
 	)
 	assert.Equal(t, http.StatusOK, w.Code)
 }
-func TestEmptyNicknameCheck(t *testing.T) {
+func TestCheckEmptyNickname(t *testing.T) {
 	var response map[string]interface{}
 	w := performRequestWithHeader(
 		ROUTER,
-		"POST",
+		"GET",
 		"/profile/",
 		AUTHHEADER[0],
 		nil,
 	)
 	assert.Equal(t, http.StatusOK, w.Code)
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
+	assert.Nil(t, err)
 	assert.Nil(t, response["nickname"])
 }
-func TestEmptyBioCheck(t *testing.T) {
+func TestCheckEmptyBio(t *testing.T) {
 	var response map[string]interface{}
 	w := performRequestWithHeader(
 		ROUTER,
-		"POST",
+		"GET",
 		"/profile/",
 		AUTHHEADER[1],
 		nil,
 	)
 	assert.Equal(t, http.StatusOK, w.Code)
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
+	assert.Nil(t, err)
 	assert.Nil(t, response["bio"])
 }
-*/
-// uncomment the upper codes when they're required
 
-// test update profile
+// test updating a profile
 
 func TestImProperProfileDeleteRequest(t *testing.T) {
 	form := &forms.Profile{
@@ -507,7 +497,7 @@ func TestProperProfileDeleteRequest(t *testing.T) {
 	assert.Equal(t, http.StatusNotFound, w.Code)
 }
 
-// test delete profile
+// test deleting a profile
 
 func TestCleanupForProfile(t *testing.T) {
 	db := models.Setup()
