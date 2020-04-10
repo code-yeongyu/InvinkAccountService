@@ -150,6 +150,22 @@ paths:
           schema:
             $ref: '#/definitions/controllers.TypicalErrorResponse'
       summary: Update my profile
+  /profile/:field_name:
+    delete:
+      description: Update my profile with given information. picture_url or bio will
+        be only accepted for :field_name
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No errors occurred, profile was successfully removed
+          schema:
+            $ref: '#/definitions/controllers.EmptyResponse'
+        "400":
+          description: Wrong password
+          schema:
+            $ref: '#/definitions/controllers.TypicalErrorResponse'
+      summary: Update my profile
   /profile/:username:
     get:
       description: Get a profile by username with given information
