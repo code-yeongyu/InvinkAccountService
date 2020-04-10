@@ -8,5 +8,5 @@ type Profile struct {
 	PictureURL      string `json:"picture_url"`
 	Bio             string `json:"bio"`
 	MyKeys          string `json:"my_keys"`
-	CurrentPassword string `json:"current_password" binding:"required"`
+	CurrentPassword string `json:"current_password"`
 }

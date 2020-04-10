@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"invink/account-service/errors"
 	"invink/account-service/forms"
 	"invink/account-service/models"
@@ -142,28 +143,38 @@ func (ctrler *Controller) UpdateMyProfile(c *gin.Context) {
 	}
 
 	profile, _ = getProfile(db, username)
-
-	if bcrypt.CompareHashAndPassword([]byte(profile.Password), []byte(inputForm.CurrentPassword)) != nil {
-		errorCode := errors.AuthenticationFailureCode
-		c.JSON(http.StatusBadRequest, gin.H{"error": errorCode, "msg": errors.Messages[errorCode]})
-		return
-	}
 	// checking current_password
 
+	// input form 을 바디에 리턴하여 값을 체크하는 방식이 필요할듯.
+	// gdb for go 공부 할 필요가 있을거같음.
+
 	if inputForm.Username != "" {
-		if errorCode := validateUsername(db, inputForm.Username); errorCode != -1 {
+		fmt.Println(structs.Map(inputForm))
+		if inputForm.CurrentPassword != "" && isPasswordCorrect(profile.Password, inputForm.CurrentPassword) {
+			if errorCode := validateUsername(db, inputForm.Username); errorCode != -1 {
+				abortWith400ErrorResponse(c, errorCode)
+				return
+			}
+			profile.Username = inputForm.Username
+		} else {
+			errorCode := errors.AuthenticationFailureCode
 			abortWith400ErrorResponse(c, errorCode)
 			return
 		}
-		profile.Username = inputForm.Username
 	}
 	if inputForm.Password != "" {
-		if errorCode := validatePassword(inputForm.Password); errorCode != -1 {
+		if inputForm.CurrentPassword != "" && isPasswordCorrect(profile.Password, inputForm.CurrentPassword) {
+			if errorCode := validatePassword(inputForm.Password); errorCode != -1 {
+				abortWith400ErrorResponse(c, errorCode)
+				return
+			}
+			passwordHash, _ := bcrypt.GenerateFromPassword([]byte(inputForm.Password), 15)
+			profile.Password = string(passwordHash)
+		} else {
+			errorCode := errors.AuthenticationFailureCode
 			abortWith400ErrorResponse(c, errorCode)
 			return
 		}
-		passwordHash, _ := bcrypt.GenerateFromPassword([]byte(inputForm.Password), 15)
-		profile.Password = string(passwordHash)
 	}
 	if inputForm.Nickname != "" {
 		profile.Nickname = inputForm.Nickname
@@ -180,7 +191,9 @@ func (ctrler *Controller) UpdateMyProfile(c *gin.Context) {
 		profile.MyKeys = inputForm.MyKeys
 	}
 
-	db.Save(&profile)
+	if err := db.Save(&profile).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"detail": err.Error()})
+	}
 
 	c.Data(http.StatusOK, gin.MIMEHTML, nil)
 }
@@ -202,9 +215,15 @@ func (ctrler *Controller) RemoveMyProfile(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": errorCode, "msg": errors.Messages[errorCode], "detail": err.Error()})
 		return
 	}
+
+	if inputForm.CurrentPassword == "" {
+		errorCode := errors.FormErrorCode
+		abortWith400ErrorResponse(c, errorCode)
+	}
+
 	if bcrypt.CompareHashAndPassword([]byte(profile.Password), []byte(inputForm.CurrentPassword)) != nil {
 		errorCode := errors.AuthenticationFailureCode
-		c.JSON(http.StatusBadRequest, gin.H{"error": errorCode, "msg": errors.Messages[errorCode]})
+		abortWith400ErrorResponse(c, errorCode)
 		return
 	}
 

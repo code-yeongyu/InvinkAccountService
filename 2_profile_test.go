@@ -237,8 +237,7 @@ func TestImProperUsernameProfilePatchRequest(t *testing.T) {
 func TestProperNicknameProfilePatchRequest(t *testing.T) {
 	var response map[string]interface{}
 	form := &forms.Profile{
-		Nickname:        "the game changer",
-		CurrentPassword: ExamplePassword,
+		Nickname: "the game changer",
 	}
 	formJSON, _ := json.Marshal(form)
 	w := performRequestWithHeader(
@@ -250,7 +249,7 @@ func TestProperNicknameProfilePatchRequest(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusOK, w.Code)
 	// change username to changer
-
+	fmt.Println(w.Body.String())
 	w = performRequestWithHeader(
 		ROUTER,
 		"GET",
@@ -266,8 +265,7 @@ func TestProperNicknameProfilePatchRequest(t *testing.T) {
 func TestProperBioProfilePatchRequest(t *testing.T) {
 	var response map[string]interface{}
 	form := &forms.Profile{
-		Bio:             "Think different.",
-		CurrentPassword: ExamplePassword,
+		Bio: "Think different.",
 	}
 	formJSON, _ := json.Marshal(form)
 	w := performRequestWithHeader(
@@ -295,9 +293,8 @@ func TestProperBioProfilePatchRequest(t *testing.T) {
 func TestProperNicknameEmailProfilePatchRequest(t *testing.T) {
 	var response map[string]interface{}
 	form := map[string]interface{}{
-		"nickname":         "JOBS",
-		"email":            "email@example.com",
-		"current_password": ExamplePassword,
+		"nickname": "JOBS",
+		"email":    "email@example.com",
 	}
 	formJSON, _ := json.Marshal(form)
 	w := performRequestWithHeader(
@@ -326,9 +323,8 @@ func TestProperNicknameEmailProfilePatchRequest(t *testing.T) {
 func TestProperNicknameBioProfilePatchRequest(t *testing.T) {
 	var response map[string]interface{}
 	form := map[string]interface{}{
-		"nickname":         "thegreatmengmota",
-		"bio":              "This is bio.",
-		"current_password": ExamplePassword,
+		"nickname": "thegreatmengmota",
+		"bio":      "This is bio.",
 	}
 	formJSON, _ := json.Marshal(form)
 	w := performRequestWithHeader(

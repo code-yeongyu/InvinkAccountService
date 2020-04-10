@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // Controller is a wrapper for all the controllers
@@ -78,4 +79,8 @@ func validatePassword(password string) (errorCode int) {
 		return
 	}
 	return -1
+}
+
+func isPasswordCorrect(hashedPassword string, password string) bool {
+	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password)) == nil
 }
