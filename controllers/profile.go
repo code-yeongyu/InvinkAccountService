@@ -198,6 +198,29 @@ func (ctrler *Controller) UpdateMyProfile(c *gin.Context) {
 	c.Data(http.StatusOK, gin.MIMEHTML, nil)
 }
 
+// ClearFieldFromMyProfile godoc
+// @Summary Update my profile
+// @Description Update my profile with given information. picture_url or bio will be only accepted for :field_name
+// @Produce json
+// @Success 200 {object} EmptyResponse "No errors occurred, profile was successfully removed"
+// @Failure 400 {object} TypicalErrorResponse "Wrong password"
+// @Router /profile/:field_name [delete]
+func (ctrler *Controller) ClearFieldFromMyProfile(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+	fieldName := c.Param("field_name")
+	username := c.MustGet("username").(string)
+	var tempUser models.User
+
+	if fieldName != "picture_url" && fieldName != "bio" && fieldName != "nickname" {
+		errorCode := errors.ParameterErrorCode
+		abortWith400ErrorResponse(c, errorCode)
+	}
+
+	db.Model(tempUser).Where("username = ?", username).Update(fieldName, gorm.Expr("NULL"))
+
+	c.Data(http.StatusOK, gin.MIMEHTML, nil)
+}
+
 // RemoveMyProfile godoc
 // @Summary Update my profile
 // @Description Update my profile with given information
