@@ -2,6 +2,7 @@ package main
 
 import (
 	"invink/account-service/controllers"
+	"invink/account-service/middlewares"
 
 	"github.com/gin-gonic/gin"
 
@@ -12,8 +13,20 @@ import (
 )
 
 func setupRoutes(r *gin.Engine) {
+	r.Use(middlewares.SetupDB)
 	c := controllers.NewController()
+
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.POST("/register", c.RegisterUser)
 	r.POST("/auth", c.AuthUser)
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	profile := r.Group("/profile")
+	profile.Use(middlewares.AuthenticateJWT)
+	{
+		profile.GET("/", c.GetMyProfile)
+		profile.PATCH("/", c.UpdateMyProfile)
+		profile.DELETE("/", c.RemoveMyProfile)
+		profile.DELETE("/:username/:field_name/", c.ClearFieldFromMyProfile)
+		profile.GET("/:username/", c.GetProfileByUsername)
+	}
 }

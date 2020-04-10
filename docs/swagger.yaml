@@ -4,14 +4,79 @@ definitions:
       token:
         type: string
     type: object
-  controllers.EmailExistsResponse:
+  controllers.EmptyResponse:
+    type: object
+  controllers.MyProfileResponse:
+    properties:
+      bio:
+        example: Think Different
+        type: string
+      follower_username:
+        example:
+        - '["mark_zuckerberg"'
+        - ' "the_great_edison"'
+        - ' "tim_cook"]'
+        items:
+          type: string
+        type: array
+      following_username:
+        example:
+        - '["mark_zuckerberg"'
+        - ' "bob_dylan"'
+        - ' "michael_jackson"]'
+        items:
+          type: string
+        type: array
+      my_keys:
+        example: '{"encrypted_master_key": <a aes-256 master key encrypted with user''s
+          password>,"encrypted_private_key": <a rsa-2048 private key encrypted with
+          master key>,"encrypted_contents_key": <a aes-256 contents key encrypted
+          with master key>,"encrypted_following_key": [{"mark_zuckerberg":<a aes-256
+          mark_zuckerberg''s contents key encrypted with master key>,"bob_dylan":<a
+          aes-256 bob_dylan''s contents key encrypted with master key>,"michael_jackson":<a
+          aes-256 michael''s contents key encrypted with master key>}]}'
+        type: string
+      nickname:
+        example: Steve Jobs
+        type: string
+      picture_url:
+        example: some kind of aws s3 url
+        type: string
+      public_key:
+        example: '-----BEGIN PUBLIC KEY-----MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhTGv0frCyyhs3Xs5LyHE4NXcM5lMqGJGNqCBo6zzjgv5BtZE5/bUHmJ8moUwTLLehtQt+wLq51wyJLe361423QNGO+5TCrKNWrOAxKhTRLwlHSjiXC/RgxbFYeD0EXGi54AwQRs27VFgzPRP7q4OMtrXIinzqhhtJTorpP8t4n9FVXrpDmJnTbF5ct/3L+hCyeWmgAsrML3rHqJ+zfw1DGogIrljdcLPzdlIcH9QjQJaWnfL7usl546aU0gkKjlUcB5+HUPNPkN3z9LEouHiKt8yVspTqyhnMnTNQnmGG7TuVCnWPXWaBaI/Aozgilj3+BIo9SiUIqKfc0FPeV61LQIDAQAB-----END
+          PUBLIC KEY-----'
+        type: string
+      username:
+        example: jobs_the_future
+        type: string
+    type: object
+  controllers.PublicProfileResponse:
+    properties:
+      bio:
+        example: Hi, I'm the great mengmota!
+        type: string
+      follower_cnt:
+        example: 0
+        type: integer
+      following_cnt:
+        example: 0
+        type: integer
+      nickname:
+        example: TheGreatMengmota
+        type: string
+      pictureURL:
+        example: some kind of aws s3 url
+        type: string
+      username:
+        example: testuser
+        type: string
+    type: object
+  controllers.TypicalErrorResponse:
     properties:
       code:
         type: integer
       msg:
         type: string
-    type: object
-  controllers.EmptyResponse:
     type: object
 info:
   contact: {}
@@ -43,8 +108,79 @@ paths:
         "400":
           description: Wrong format or invalid information
           schema:
-            $ref: '#/definitions/controllers.EmptyResponse'
+            $ref: '#/definitions/controllers.TypicalErrorResponse'
       summary: Authenticate an user
+  /profile/:
+    delete:
+      description: Update my profile with given information
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No errors occurred, profile was successfully removed
+          schema:
+            $ref: '#/definitions/controllers.EmptyResponse'
+        "400":
+          description: Wrong password
+          schema:
+            $ref: '#/definitions/controllers.TypicalErrorResponse'
+      summary: Update my profile
+    get:
+      description: Get a requested user's profile
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: When request to other's profile
+          schema:
+            $ref: '#/definitions/controllers.MyProfileResponse'
+        "404": {}
+      summary: Get my profile
+    patch:
+      description: Update my profile with given information
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No errors occurred, profile was successfully updated
+          schema:
+            $ref: '#/definitions/controllers.EmptyResponse'
+        "400":
+          description: Wrong format or invalid information
+          schema:
+            $ref: '#/definitions/controllers.TypicalErrorResponse'
+      summary: Update my profile
+  /profile/:field_name:
+    delete:
+      description: Update my profile with given information. picture_url or bio will
+        be only accepted for :field_name
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No errors occurred, profile was successfully removed
+          schema:
+            $ref: '#/definitions/controllers.EmptyResponse'
+        "400":
+          description: Wrong password
+          schema:
+            $ref: '#/definitions/controllers.TypicalErrorResponse'
+      summary: Update my profile
+  /profile/:username:
+    get:
+      description: Get a profile by username with given information
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: When request to other's profile
+          schema:
+            $ref: '#/definitions/controllers.PublicProfileResponse'
+        "404":
+          description: No such user
+          schema:
+            $ref: '#/definitions/controllers.EmptyResponse'
+      summary: Get a profile by username
   /register/:
     post:
       consumes:
@@ -89,6 +225,6 @@ paths:
         "400":
           description: Normal Form error, like username duplicate
           schema:
-            $ref: '#/definitions/controllers.EmailExistsResponse'
+            $ref: '#/definitions/controllers.TypicalErrorResponse'
       summary: Register an user
 swagger: "2.0"

@@ -10,7 +10,7 @@ type User struct {
 	Bio        string `gorm:"column:bio"`
 	PictureURL string `gorm:"column:picture_url"`
 	Following  []User `gorm:"many2many:following;foreignkey:username;default:[]"`
-	FollowedBy []User `gorm:"many2many:followed_by;foreignkey:username;default:[]"`
+	Follower   []User `gorm:"many2many:follower;foreignkey:username;default:[]"`
 	PublicKey  string `gorm:"column:public_key;not null"`
 	MyKeys     string `sql:"json" gorm:"column:my_keys;default:'{}'"`
 }

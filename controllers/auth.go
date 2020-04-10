@@ -22,7 +22,7 @@ import (
 // @Param id path string true "Username or Email"
 // @Param password path string true "Password"
 // @Success 200 {object} AuthenticatedResponse "Valid information, authenticated"
-// @Failure 400 {object} EmptyResponse "Wrong format or invalid information"
+// @Failure 400 {object} TypicalErrorResponse "Wrong format or invalid information"
 // @Router /auth/ [post]
 func (ctrler *Controller) AuthUser(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
@@ -37,12 +37,14 @@ func (ctrler *Controller) AuthUser(c *gin.Context) {
 	}
 
 	if err := db.Where("email = ? OR username = ?", inputForm.ID, inputForm.ID).First(&user).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to authenticate."})
+		errorCode := errors.AuthenticationFailureCode
+		c.JSON(http.StatusBadRequest, gin.H{"error": errorCode, "msg": errors.Messages[errorCode]})
 		return
 	} // checking ID
 
 	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(inputForm.Password)) != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to authenticate."})
+		errorCode := errors.AuthenticationFailureCode
+		c.JSON(http.StatusBadRequest, gin.H{"error": errorCode, "msg": errors.Messages[errorCode]})
 		return
 	}
 

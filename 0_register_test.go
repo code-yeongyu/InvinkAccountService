@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 
 	"invink/account-service/errors"
@@ -28,6 +29,19 @@ var ROUTER *gin.Engine
 var PUBLICKEY string
 var DBNAMEORIGIN string
 
+const ExampleEmail = "test@example.com"
+const ExampleUsername = "testuser"
+const ExamplePassword = "A-maz1ng*pass"
+const ExampleNickname = "AmazingMengmota"
+const ExampleBio = "Hi, I'm the great Mengmota"
+
+func cleanUp(db *gorm.DB) {
+	db.DropTable(&models.User{})
+	db.DropTable("follower")
+	db.DropTable("following")
+	os.Setenv("ACCOUNT_DB_DBNAME", DBNAMEORIGIN)
+	os.Setenv("ACCOUNT_DB_DBNAME", "testing_db")
+}
 func TestInitiateForRegistration(t *testing.T) {
 	DBNAMEORIGIN = os.Getenv("ACCOUNT_DB_DBNAME")
 	os.Setenv("ACCOUNT_DB_DBNAME", "testing_db")
@@ -44,13 +58,15 @@ LQIDAQAB
 }
 
 func TestProperReuqest(t *testing.T) {
+	db := models.Setup()
+	cleanUp(db)
 	form := &forms.Registration{
-		Email:     "test@example.com",
-		Username:  "testuser",
-		Password:  "A-maz1ng*pass",
+		Email:     ExampleEmail,
+		Username:  ExampleUsername,
+		Password:  ExamplePassword,
 		PublicKey: PUBLICKEY,
-		Nickname:  "AmazingMengmota",
-		Bio:       "Hi, I'm the great Mengmota",
+		Nickname:  ExampleNickname,
+		Bio:       ExampleBio,
 	}
 	formJSON, _ := json.Marshal(form)
 	w := performRequest(ROUTER, "POST", "/register",
@@ -62,12 +78,12 @@ func TestProperReuqest(t *testing.T) {
 func TestEmailDuplicate(t *testing.T) {
 	var response map[string]interface{}
 	form := &forms.Registration{
-		Email:     "test@example.com",
+		Email:     ExampleEmail,
 		Username:  "testuser1",
-		Password:  "A-maz1ng*pass",
+		Password:  ExamplePassword,
 		PublicKey: PUBLICKEY,
-		Nickname:  "AmazingMengmota",
-		Bio:       "Hi, I'm the great Mengmota",
+		Nickname:  ExampleNickname,
+		Bio:       ExampleBio,
 	}
 	formJSON, _ := json.Marshal(form)
 
@@ -84,11 +100,11 @@ func TestUsernameDuplicate(t *testing.T) {
 	var response map[string]interface{}
 	form := &forms.Registration{
 		Email:     "test1@example.com",
-		Username:  "testuser",
-		Password:  "A-maz1ng*pass",
+		Username:  ExampleUsername,
+		Password:  ExamplePassword,
 		PublicKey: PUBLICKEY,
-		Nickname:  "AmazingMengmota",
-		Bio:       "Hi, I'm the great Mengmota",
+		Nickname:  ExampleNickname,
+		Bio:       ExampleBio,
 	}
 	formJSON, _ := json.Marshal(form)
 
@@ -106,10 +122,10 @@ func TestImproperEmail(t *testing.T) {
 	form := &forms.Registration{
 		Email:     "test@example",
 		Username:  "test1",
-		Password:  "A-maz1ng*pass",
+		Password:  ExamplePassword,
 		PublicKey: PUBLICKEY,
-		Nickname:  "AmazingMengmota",
-		Bio:       "Hi, I'm the great Mengmota",
+		Nickname:  ExampleNickname,
+		Bio:       ExampleBio,
 	}
 	formJSON, _ := json.Marshal(form)
 
@@ -127,10 +143,10 @@ func TestImproperUsername(t *testing.T) {
 	form := &forms.Registration{
 		Email:     "test1@example.com",
 		Username:  "test/user",
-		Password:  "A-maz1ng*pass",
+		Password:  ExamplePassword,
 		PublicKey: PUBLICKEY,
-		Nickname:  "AmazingMengmota",
-		Bio:       "Hi, I'm the great Mengmota",
+		Nickname:  ExampleNickname,
+		Bio:       ExampleBio,
 	}
 	formJSON, _ := json.Marshal(form)
 
@@ -150,8 +166,8 @@ func TestTooShortPassword(t *testing.T) {
 		Username:  "test",
 		Password:  "a",
 		PublicKey: PUBLICKEY,
-		Nickname:  "AmazingMengmota",
-		Bio:       "Hi, I'm the great Mengmota",
+		Nickname:  ExampleNickname,
+		Bio:       ExampleBio,
 	}
 	formJSON, _ := json.Marshal(form)
 
@@ -171,8 +187,8 @@ func TestVulnerablePassword(t *testing.T) {
 		Username:  "test",
 		Password:  "12345678",
 		PublicKey: PUBLICKEY,
-		Nickname:  "AmazingMengmota",
-		Bio:       "Hi, I'm the great Mengmota",
+		Nickname:  ExampleNickname,
+		Bio:       ExampleBio,
 	}
 	formJSON, _ := json.Marshal(form)
 
@@ -190,10 +206,10 @@ func TestImproperPublicKey(t *testing.T) {
 	form := &forms.Registration{
 		Email:     "test1@example.com",
 		Username:  "test",
-		Password:  "A-maz1ng*pass",
+		Password:  ExamplePassword,
 		PublicKey: "error key",
-		Nickname:  "AmazingMengmota",
-		Bio:       "Hi, I'm the great Mengmota",
+		Nickname:  ExampleNickname,
+		Bio:       ExampleBio,
 	}
 	formJSON, _ := json.Marshal(form)
 
@@ -211,8 +227,8 @@ func TestEmailEmpty(t *testing.T) {
 		Username:  "test",
 		Password:  "12345678",
 		PublicKey: PUBLICKEY,
-		Nickname:  "AmazingMengmota",
-		Bio:       "Hi, I'm the great Mengmota",
+		Nickname:  ExampleNickname,
+		Bio:       ExampleBio,
 	}
 	formJSON, _ := json.Marshal(form)
 
@@ -225,10 +241,10 @@ func TestEmailEmpty(t *testing.T) {
 func TestUsernameEmpty(t *testing.T) {
 	form := &forms.Registration{
 		Email:     "test1@example.com",
-		Password:  "A-maz1ng*pass",
+		Password:  ExamplePassword,
 		PublicKey: PUBLICKEY,
-		Nickname:  "AmazingMengmota",
-		Bio:       "Hi, I'm the great Mengmota",
+		Nickname:  ExampleNickname,
+		Bio:       ExampleBio,
 	}
 	formJSON, _ := json.Marshal(form)
 
@@ -243,8 +259,8 @@ func TestPasswordEmpty(t *testing.T) {
 		Email:     "test1@example.com",
 		Username:  "test",
 		PublicKey: PUBLICKEY,
-		Nickname:  "AmazingMengmota",
-		Bio:       "Hi, I'm the great Mengmota",
+		Nickname:  ExampleNickname,
+		Bio:       ExampleBio,
 	}
 	formJSON, _ := json.Marshal(form)
 
@@ -258,9 +274,9 @@ func TestPublicKeyEmpty(t *testing.T) {
 	form := &forms.Registration{
 		Email:    "test1@example.com",
 		Username: "test",
-		Password: "A-maz1ng*pass",
-		Nickname: "AmazingMengmota",
-		Bio:      "Hi, I'm the great Mengmota",
+		Password: ExamplePassword,
+		Nickname: ExampleNickname,
+		Bio:      ExampleBio,
 	}
 	formJSON, _ := json.Marshal(form)
 
@@ -272,9 +288,5 @@ func TestPublicKeyEmpty(t *testing.T) {
 
 func TestCleanupForRegistration(t *testing.T) {
 	db := models.Setup()
-	db.DropTable(&models.User{})
-	db.DropTable("followed_by")
-	db.DropTable("following")
-	os.Setenv("ACCOUNT_DB_DBNAME", DBNAMEORIGIN)
-	os.Setenv("ACCOUNT_DB_DBNAME", "testing_db")
+	cleanUp(db)
 }

@@ -25,7 +25,7 @@ import (
 // @Param nickname path string false "Nickname"
 // @Param bio path string false "Bio"
 // @Success 201 {object} EmptyResponse "User account created"
-// @Failure 400 {object} EmailExistsResponse "Normal Form error, like username duplicate"
+// @Failure 400 {object} TypicalErrorResponse "Normal Form error, like username duplicate"
 // @Router /register/ [post]
 func (ctrler *Controller) RegisterUser(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
