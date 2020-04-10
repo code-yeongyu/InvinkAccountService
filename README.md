@@ -1,15 +1,15 @@
 # InvinkAccountService
 - [x] Registeration
-    - [ ]Email Verification
-- [ ]Email OTP
-    - [ ]Creating Token
-- [x]Profile
-    - [x]Read Profile
-        - [x]Read My Profile
-        - [x]Read Other's Profile
-    - [x]Changing Password
-    - [x]Upload Profile Image
-    - [x]Remove Account
+    - [ ] Email Verification
+- [ ] Email OTP
+    - [ ] Creating Token
+- [x] Profile
+    - [x] Read Profile
+        - [x] Read My Profile
+        - [x] Read Other's Profile
+    - [x] Changing Password
+    - [x] Upload Profile Image
+    - [x] Remove Account
 
 
 ## Process
