@@ -2,7 +2,8 @@ package errors
 
 // Messages contains the error message for each error code
 var Messages = map[int]string{
-	FormErrorCode: "Form error.",
+	FormErrorCode:      "Form error.",
+	ParameterErrorCode: "You're not allowed to use this parameter.",
 
 	EmailExistsCode:      "Email exists.",
 	EmailFormatErrorCode: "Email format error.",
