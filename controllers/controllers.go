@@ -56,8 +56,7 @@ func verifyUsername(s string) bool {
 }
 
 func validateUsername(db *gorm.DB, username string) (errorCode int) {
-	var tempUser models.User
-	if err := db.Where("username = ?", username).First(&tempUser).Error; err == nil {
+	if err := db.Where("username = ?", username).First(&models.User{}).Error; err == nil {
 		errorCode = errors.UsernameExistsCode
 		return
 	} // validating username duplicates

@@ -51,7 +51,7 @@ func (ctrler *Controller) AuthUser(c *gin.Context) {
 	expirationTime := time.Now().Add(15 * time.Minute)
 
 	claims := &models.Claims{
-		Username: user.Username,
+		ID: user.ID,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},

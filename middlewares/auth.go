@@ -48,15 +48,14 @@ func AuthenticateJWT(c *gin.Context) {
 
 	db := c.MustGet("db").(*gorm.DB)
 
-	var tempUser models.User
-	if err := db.Where("username = ?", claims.Username).First(&tempUser).Error; err != nil {
+	if err := db.Model(models.User{}).Where("ID = ?", claims.ID).First(&models.User{}).Error; err != nil {
 		errorCode := errors.AuthenticationFailureCode
 		c.JSON(http.StatusUnauthorized, gin.H{"error": errorCode, "msg": errors.Messages[errorCode], "detail": "Username has changed, therefore you have to refresh your token"})
 		c.Abort()
 		return
 	}
 
-	c.Set("username", claims.Username)
+	c.Set("id", claims.ID)
 
 	c.Next()
 }

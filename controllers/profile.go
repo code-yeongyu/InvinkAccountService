@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"invink/account-service/errors"
 	"invink/account-service/forms"
 	"invink/account-service/models"
@@ -16,8 +15,13 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func getProfile(db *gorm.DB, username string) (user models.User, err error) {
-	err = db.Where("username = ?", username).First(&user).Error
+func getProfile(db *gorm.DB, ID uint64) (user models.User, err error) {
+	err = db.Model(user).Where("ID = ?", ID).First(&user).Error
+	return
+}
+
+func getProfileByUsername(db *gorm.DB, username string) (user models.User, err error) {
+	err = db.Model(user).Where("username = ?", username).First(&user).Error
 	return
 }
 
@@ -90,11 +94,9 @@ func modelToPublicProfileMap(profile models.User) (publicProfileMap map[string]i
 // @Failure 404
 // @Router /profile/ [get]
 func (ctrler *Controller) GetMyProfile(c *gin.Context) {
-	username := c.MustGet("username").(string)
-
 	db := c.MustGet("db").(*gorm.DB)
-	profile, _ := getProfile(db, username)
-
+	ID := c.MustGet("id").(uint64)
+	profile, _ := getProfile(db, ID)
 	c.JSON(http.StatusOK, modelToMyProfileMap(profile))
 }
 
@@ -106,21 +108,19 @@ func (ctrler *Controller) GetMyProfile(c *gin.Context) {
 // @Failure 404 {object} EmptyResponse "No such user"
 // @Router /profile/:username [get]
 func (ctrler *Controller) GetProfileByUsername(c *gin.Context) {
-	username := c.Param("username")
 	db := c.MustGet("db").(*gorm.DB)
-
-	if c.Param("username") == c.MustGet("username").(string) {
-		ctrler.GetMyProfile(c)
-		return
-	}
-
-	profile, err := getProfile(db, username)
+	ID := c.MustGet("id").(uint64)
+	loginUserProfile, _ := getProfile(db, ID)
+	requestedUserProfile, err := getProfileByUsername(db, c.Param("username"))
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 		return
 	}
-
-	c.JSON(http.StatusOK, modelToPublicProfileMap(profile))
+	if c.Param("username") == loginUserProfile.Username {
+		ctrler.GetMyProfile(c)
+		return
+	}
+	c.JSON(http.StatusOK, modelToPublicProfileMap(requestedUserProfile))
 }
 
 // UpdateMyProfile godoc
@@ -133,8 +133,8 @@ func (ctrler *Controller) GetProfileByUsername(c *gin.Context) {
 func (ctrler *Controller) UpdateMyProfile(c *gin.Context) {
 	var profile models.User
 	var inputForm forms.Profile
-	username := c.MustGet("username").(string)
 	db := c.MustGet("db").(*gorm.DB)
+	ID := c.MustGet("id").(uint64)
 
 	if err := c.ShouldBindJSON(&inputForm); err != nil {
 		errorCode := errors.FormErrorCode
@@ -142,14 +142,10 @@ func (ctrler *Controller) UpdateMyProfile(c *gin.Context) {
 		return
 	}
 
-	profile, _ = getProfile(db, username)
+	profile, _ = getProfile(db, ID)
 	// checking current_password
 
-	// input form 을 바디에 리턴하여 값을 체크하는 방식이 필요할듯.
-	// gdb for go 공부 할 필요가 있을거같음.
-
 	if inputForm.Username != "" {
-		fmt.Println(structs.Map(inputForm))
 		if inputForm.CurrentPassword != "" && isPasswordCorrect(profile.Password, inputForm.CurrentPassword) {
 			if errorCode := validateUsername(db, inputForm.Username); errorCode != -1 {
 				abortWith400ErrorResponse(c, errorCode)
@@ -194,8 +190,6 @@ func (ctrler *Controller) UpdateMyProfile(c *gin.Context) {
 	if err := db.Save(&profile).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"detail": err.Error()})
 	}
-
-	c.Data(http.StatusOK, gin.MIMEHTML, nil)
 }
 
 // ClearFieldFromMyProfile godoc
@@ -206,19 +200,15 @@ func (ctrler *Controller) UpdateMyProfile(c *gin.Context) {
 // @Failure 400 {object} TypicalErrorResponse "Wrong password"
 // @Router /profile/:field_name [delete]
 func (ctrler *Controller) ClearFieldFromMyProfile(c *gin.Context) {
-	db := c.MustGet("db").(*gorm.DB)
 	fieldName := c.Param("field_name")
-	username := c.MustGet("username").(string)
-	var tempUser models.User
+	db := c.MustGet("db").(*gorm.DB)
+	ID := c.MustGet("id").(uint64)
 
 	if fieldName != "picture_url" && fieldName != "bio" && fieldName != "nickname" {
 		errorCode := errors.ParameterErrorCode
 		abortWith400ErrorResponse(c, errorCode)
 	}
-
-	db.Model(tempUser).Where("username = ?", username).Update(fieldName, gorm.Expr("NULL"))
-
-	c.Data(http.StatusOK, gin.MIMEHTML, nil)
+	db.Model(models.User{}).Where("ID = ?", ID).Update(fieldName, gorm.Expr("NULL"))
 }
 
 // RemoveMyProfile godoc
@@ -230,9 +220,9 @@ func (ctrler *Controller) ClearFieldFromMyProfile(c *gin.Context) {
 // @Router /profile/ [delete]
 func (ctrler *Controller) RemoveMyProfile(c *gin.Context) {
 	var inputForm forms.Profile
-	username := c.MustGet("username").(string)
 	db := c.MustGet("db").(*gorm.DB)
-	profile, _ := getProfile(db, username)
+	ID := c.MustGet("id").(uint64)
+	profile, _ := getProfile(db, ID)
 	if err := c.ShouldBindJSON(&inputForm); err != nil {
 		errorCode := errors.FormErrorCode
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": errorCode, "msg": errors.Messages[errorCode], "detail": err.Error()})
@@ -250,7 +240,5 @@ func (ctrler *Controller) RemoveMyProfile(c *gin.Context) {
 		return
 	}
 
-	db.Where("username = ?", username).Delete(models.User{})
-
-	c.Data(http.StatusOK, gin.MIMEHTML, nil)
+	db.Model(profile).Where("ID = ?", ID).Delete(models.User{})
 }
