@@ -230,8 +230,8 @@ func TestVulnerablePasswordRegistrationRequest(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
-	assert.Nil(t, err)                                                                    // check response form error
-	assert.Equal(t, errors.PasswordVulnerableErrorCode, int(response["error"].(float64))) // check error
+	assert.Nil(t, err)                                                               // check response form error
+	assert.Equal(t, errors.PasswordVulnerableCode, int(response["error"].(float64))) // check error
 }
 func TestPasswordEmptyRegistrationRequest(t *testing.T) {
 	form := &forms.Registration{

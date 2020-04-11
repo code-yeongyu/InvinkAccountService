@@ -74,7 +74,7 @@ func validatePassword(password string) (errorCode int) {
 	} // validating password length
 
 	if !verifyPassword(password) {
-		errorCode = errors.PasswordVulnerableErrorCode
+		errorCode = errors.PasswordVulnerableCode
 		return
 	}
 	return -1

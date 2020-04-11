@@ -71,7 +71,7 @@ func (ctrler *Controller) RegisterUser(c *gin.Context) {
 	} // validating password length
 
 	if !verifyPassword(inputForm.Password) {
-		abortWith400ErrorResponse(c, errors.PasswordVulnerableErrorCode)
+		abortWith400ErrorResponse(c, errors.PasswordVulnerableCode)
 		return
 	} // validating password format
 

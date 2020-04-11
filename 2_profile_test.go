@@ -405,7 +405,7 @@ func TestVulerablePasswordProfilePatchRequest(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, w.Code)
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
 	assert.Nil(t, err)
-	assert.Equal(t, errors.PasswordVulnerableErrorCode, int(response["error"].(float64)))
+	assert.Equal(t, errors.PasswordVulnerableCode, int(response["error"].(float64)))
 }
 func TestDeleteNicknameRequest(t *testing.T) {
 	w := performRequestWithHeader(
