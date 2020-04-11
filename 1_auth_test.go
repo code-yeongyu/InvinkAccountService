@@ -37,7 +37,7 @@ LQIDAQAB
 		form.Bio = bio
 	}
 	formJSON, _ := json.Marshal(form)
-	performRequest(ROUTER, "POST", "/register",
+	performRequest(ROUTER, "POST", "/register/",
 		strings.NewReader(string(formJSON)),
 	)
 }
@@ -68,7 +68,7 @@ func TestProperEmailAuthRequest(t *testing.T) {
 		Password: ExamplePassword,
 	}
 	formJSON, _ := json.Marshal(form)
-	w := performRequest(ROUTER, "POST", "/auth",
+	w := performRequest(ROUTER, "POST", "/auth/",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusOK, w.Code) // check http status code
@@ -83,7 +83,7 @@ func TestProperUsernameAuthRequest(t *testing.T) {
 		Password: ExamplePassword,
 	}
 	formJSON, _ := json.Marshal(form)
-	w := performRequest(ROUTER, "POST", "/auth",
+	w := performRequest(ROUTER, "POST", "/auth/",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusOK, w.Code) // check http status code
@@ -94,24 +94,24 @@ func TestProperUsernameAuthRequest(t *testing.T) {
 
 // test successful cases
 
-func TestProperUsernameWrongPasswordAuthRequest(t *testing.T) {
-	form := &forms.Authentication{
-		ID:       "nothing",
-		Password: "12345678",
-	}
-	formJSON, _ := json.Marshal(form)
-	w := performRequest(ROUTER, "POST", "/auth",
-		strings.NewReader(string(formJSON)),
-	)
-	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
-}
 func TestProperEmailWrongPasswordAuthRequest(t *testing.T) {
 	form := &forms.Authentication{
 		ID:       ExampleEmail,
 		Password: "12345678",
 	}
 	formJSON, _ := json.Marshal(form)
-	w := performRequest(ROUTER, "POST", "/auth",
+	w := performRequest(ROUTER, "POST", "/auth/",
+		strings.NewReader(string(formJSON)),
+	)
+	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
+}
+func TestWrongUsernameWrongPasswordAuthRequest(t *testing.T) {
+	form := &forms.Authentication{
+		ID:       "nothing",
+		Password: "12345678",
+	}
+	formJSON, _ := json.Marshal(form)
+	w := performRequest(ROUTER, "POST", "/auth/",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
@@ -122,7 +122,7 @@ func TestWrongUsernameAuthRequest(t *testing.T) {
 		Password: ExamplePassword,
 	}
 	formJSON, _ := json.Marshal(form)
-	w := performRequest(ROUTER, "POST", "/auth",
+	w := performRequest(ROUTER, "POST", "/auth/",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
@@ -133,7 +133,7 @@ func TestWrongInfoAuthRequest(t *testing.T) {
 		Password: "12345678",
 	}
 	formJSON, _ := json.Marshal(form)
-	w := performRequest(ROUTER, "POST", "/auth",
+	w := performRequest(ROUTER, "POST", "/auth/",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code

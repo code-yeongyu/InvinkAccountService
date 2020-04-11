@@ -17,8 +17,8 @@ func setupRoutes(r *gin.Engine) {
 	c := controllers.NewController()
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	r.POST("/register", c.RegisterUser)
-	r.POST("/auth", c.AuthUser)
+	r.POST("/register/", c.RegisterUser)
+	r.POST("/auth/", c.AuthUser)
 
 	profile := r.Group("/profile")
 	profile.Use(middlewares.AuthenticateJWT)

@@ -72,7 +72,7 @@ func TestProperRegistrationRequest(t *testing.T) {
 		Bio:       ExampleBio,
 	}
 	formJSON, _ := json.Marshal(form)
-	w := performRequest(ROUTER, "POST", "/register",
+	w := performRequest(ROUTER, "POST", "/register/",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusCreated, w.Code) // check http status code
@@ -91,7 +91,7 @@ func TestEmailDuplicateRegistrationRequest(t *testing.T) {
 	}
 	formJSON, _ := json.Marshal(form)
 
-	w := performRequest(ROUTER, "POST", "/register",
+	w := performRequest(ROUTER, "POST", "/register/",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
@@ -111,7 +111,7 @@ func TestImproperEmailRegistrationRequest(t *testing.T) {
 	}
 	formJSON, _ := json.Marshal(form)
 
-	w := performRequest(ROUTER, "POST", "/register",
+	w := performRequest(ROUTER, "POST", "/register/",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
@@ -129,7 +129,7 @@ func TestEmailEmptyRegistrationRequest(t *testing.T) {
 	}
 	formJSON, _ := json.Marshal(form)
 
-	w := performRequest(ROUTER, "POST", "/register",
+	w := performRequest(ROUTER, "POST", "/register/",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
@@ -148,7 +148,7 @@ func TestUsernameDuplicateRegistrationRequest(t *testing.T) {
 	}
 	formJSON, _ := json.Marshal(form)
 
-	w := performRequest(ROUTER, "POST", "/register",
+	w := performRequest(ROUTER, "POST", "/register/",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
@@ -168,7 +168,7 @@ func TestImproperUsernameRegistrationRequest(t *testing.T) {
 	}
 	formJSON, _ := json.Marshal(form)
 
-	w := performRequest(ROUTER, "POST", "/register",
+	w := performRequest(ROUTER, "POST", "/register/",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
@@ -186,7 +186,7 @@ func TestUsernameEmptyRegistrationRequest(t *testing.T) {
 	}
 	formJSON, _ := json.Marshal(form)
 
-	w := performRequest(ROUTER, "POST", "/register",
+	w := performRequest(ROUTER, "POST", "/register/",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
@@ -205,7 +205,7 @@ func TestTooShortPasswordRegistrationRequest(t *testing.T) {
 	}
 	formJSON, _ := json.Marshal(form)
 
-	w := performRequest(ROUTER, "POST", "/register",
+	w := performRequest(ROUTER, "POST", "/register/",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
@@ -225,7 +225,7 @@ func TestVulnerablePasswordRegistrationRequest(t *testing.T) {
 	}
 	formJSON, _ := json.Marshal(form)
 
-	w := performRequest(ROUTER, "POST", "/register",
+	w := performRequest(ROUTER, "POST", "/register/",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
@@ -243,7 +243,7 @@ func TestPasswordEmptyRegistrationRequest(t *testing.T) {
 	}
 	formJSON, _ := json.Marshal(form)
 
-	w := performRequest(ROUTER, "POST", "/register",
+	w := performRequest(ROUTER, "POST", "/register/",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
@@ -262,7 +262,7 @@ func TestImproperPublicKeyRegistrationRequest(t *testing.T) {
 	}
 	formJSON, _ := json.Marshal(form)
 
-	w := performRequest(ROUTER, "POST", "/register",
+	w := performRequest(ROUTER, "POST", "/register/",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
@@ -280,7 +280,7 @@ func TestPublicKeyEmptyRegistrationRequest(t *testing.T) {
 	}
 	formJSON, _ := json.Marshal(form)
 
-	w := performRequest(ROUTER, "POST", "/register",
+	w := performRequest(ROUTER, "POST", "/register/",
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
