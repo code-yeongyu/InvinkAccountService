@@ -1,8 +1,6 @@
 # InvinkAccountService
 - [x] Registeration
     - [ ] Email Verification
-- [ ] Email OTP
-    - [ ] Creating Token
 - [x] Profile
     - [x] Read Profile
         - [x] Read My Profile
@@ -10,10 +8,13 @@
     - [x] Changing Password
     - [x] Upload Profile Image
     - [x] Remove Account
+- [ ] Count Capture
 - [ ] Following
     - [ ] Follow someone
     - [ ] Unfollow someone
     - [ ] Block someone
+- [ ] Email OTP
+    - [ ] Creating Token
 
 ## Process
 Every API should be done by following process.
