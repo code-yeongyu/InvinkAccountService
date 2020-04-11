@@ -42,6 +42,8 @@ LQIDAQAB
 	)
 }
 
+// test util
+
 func TestInitiateForAuthentication(t *testing.T) {
 	DBNAMEORIGIN = os.Getenv("ACCOUNT_DB_DBNAME")
 	os.Setenv("ACCOUNT_DB_DBNAME", "testing_db")
@@ -74,7 +76,6 @@ func TestProperEmailAuthRequest(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotEqual(t, "", response["token"]) // check if token is empty
 }
-
 func TestProperUsernameAuthRequest(t *testing.T) {
 	var response map[string]string
 	form := &forms.Authentication{
@@ -91,17 +92,7 @@ func TestProperUsernameAuthRequest(t *testing.T) {
 	assert.NotEqual(t, "", response["token"]) // check if token is empty
 }
 
-func TestWrongUsernameAuthRequest(t *testing.T) {
-	form := &forms.Authentication{
-		ID:       "wrong_user",
-		Password: ExamplePassword,
-	}
-	formJSON, _ := json.Marshal(form)
-	w := performRequest(ROUTER, "POST", "/auth",
-		strings.NewReader(string(formJSON)),
-	)
-	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
-}
+// test successful cases
 
 func TestProperUsernameWrongPasswordAuthRequest(t *testing.T) {
 	form := &forms.Authentication{
@@ -114,7 +105,6 @@ func TestProperUsernameWrongPasswordAuthRequest(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
 }
-
 func TestProperEmailWrongPasswordAuthRequest(t *testing.T) {
 	form := &forms.Authentication{
 		ID:       ExampleEmail,
@@ -126,7 +116,17 @@ func TestProperEmailWrongPasswordAuthRequest(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
 }
-
+func TestWrongUsernameAuthRequest(t *testing.T) {
+	form := &forms.Authentication{
+		ID:       "wrong_user",
+		Password: ExamplePassword,
+	}
+	formJSON, _ := json.Marshal(form)
+	w := performRequest(ROUTER, "POST", "/auth",
+		strings.NewReader(string(formJSON)),
+	)
+	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
+}
 func TestWrongInfoAuthRequest(t *testing.T) {
 	form := &forms.Authentication{
 		ID:       "nothing",
@@ -138,6 +138,8 @@ func TestWrongInfoAuthRequest(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusBadRequest, w.Code) // check http status code
 }
+
+// test failure cases
 
 func TestCleanupForAuthentication(t *testing.T) {
 	db := models.Setup()
