@@ -36,10 +36,10 @@ func getToken(ID string, password string) string {
 	}
 	var response map[string]string
 	formJSON, _ := json.Marshal(authForm)
-	w := performRequest(ROUTER, "POST", "/auth",
+	w := performRequest(ROUTER, "POST", "/auth/",
 		strings.NewReader(string(formJSON)),
 	)
-	if w.Code == 200 {
+	if w.Code == http.StatusOK {
 		json.Unmarshal([]byte(w.Body.String()), &response)
 		return response["token"]
 	}
@@ -249,7 +249,6 @@ func TestProperNicknameProfilePatchRequest(t *testing.T) {
 	)
 	assert.Equal(t, http.StatusOK, w.Code)
 	// change username to changer
-	fmt.Println(w.Body.String())
 	w = performRequestWithHeader(
 		ROUTER,
 		"GET",
@@ -405,7 +404,7 @@ func TestVulerablePasswordProfilePatchRequest(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, w.Code)
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
 	assert.Nil(t, err)
-	assert.Equal(t, errors.PasswordVulnerableErrorCode, int(response["error"].(float64)))
+	assert.Equal(t, errors.PasswordVulnerableCode, int(response["error"].(float64)))
 }
 func TestDeleteNicknameRequest(t *testing.T) {
 	w := performRequestWithHeader(
@@ -486,6 +485,7 @@ func TestProperProfileDeleteRequest(t *testing.T) {
 		strings.NewReader(string(formJSON)),
 	)
 	assert.Equal(t, http.StatusOK, w.Code)
+	fmt.Println(w.Body.String())
 
 	w = performRequestWithHeader(
 		ROUTER,

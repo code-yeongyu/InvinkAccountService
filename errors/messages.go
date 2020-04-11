@@ -11,8 +11,8 @@ var Messages = map[int]string{
 	UsernameExistsCode:      "Username exists.",
 	UsernameFormatErrorCode: "Username format error.",
 
-	PasswordTooShortCode:        "Password is too short.",
-	PasswordVulnerableErrorCode: "Password is vulnerable.",
+	PasswordTooShortCode:   "Password is too short.",
+	PasswordVulnerableCode: "Password is vulnerable.",
 
 	PublicKeyErrorCode: "Not a proper public key.",
 

@@ -10,8 +10,8 @@ const (
 	UsernameExistsCode      = 201
 	UsernameFormatErrorCode = 202
 
-	PasswordTooShortCode        = 301
-	PasswordVulnerableErrorCode = 302
+	PasswordTooShortCode   = 301
+	PasswordVulnerableCode = 302
 
 	PublicKeyErrorCode = 402
 
