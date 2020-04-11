@@ -10,7 +10,10 @@
     - [x] Changing Password
     - [x] Upload Profile Image
     - [x] Remove Account
-
+- [ ] Following
+    - [ ] Follow someone
+    - [ ] Unfollow someone
+    - [ ] Block someone
 
 ## Process
 Every API should be done by following process.
