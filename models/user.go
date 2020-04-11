@@ -2,7 +2,7 @@ package models
 
 // User is a model for each user
 type User struct {
-	ID         uint   `gorm:"primary_key"`
+	ID         uint64 `gorm:"primary_key"`
 	Username   string `gorm:"column:username;unique;not null"`
 	Email      string `gorm:"column:email;unique_index;not null"`
 	Password   string `gorm:"column:password;not null"`
