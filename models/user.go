@@ -25,6 +25,7 @@ type User struct {
 	PublicKey  string `gorm:"column:public_key;not null"`
 	MyKeys     string `sql:"json" gorm:"column:my_keys;default:'{}'"`
 	CaptureCnt int    `gorm:"column:capture_cnt;default:0"`
+	ReportCnt  int    `gorm:"column:report_cnt;default:0"`
 }
 
 func (u *User) isProperUsername(s string) bool {
@@ -137,12 +138,15 @@ func (u *User) ToMyProfileMap() (myProfileMap map[string]interface{}) {
 	delete(myProfileMap, "PictureURL")
 	myProfileMap["public_key"] = myProfileMap["PublicKey"]
 	delete(myProfileMap, "PublicKey")
+	myProfileMap["report_cnt"] = myProfileMap["ReportCnt"]
+	delete(myProfileMap, "ReportCnt")
 	// camelCase to snake_case
 
 	delete(myProfileMap, "ID")
 	delete(myProfileMap, "Password")
 	delete(myProfileMap, "Follower")
 	delete(myProfileMap, "Following")
+	delete(myProfileMap, "CaptureCnt")
 	// remove secure informations
 
 	for k, v := range myProfileMap {
@@ -180,6 +184,7 @@ func (u *User) ToPublicProfileMap() (publicProfileMap map[string]interface{}) {
 		"following_cnt": len(u.Following),
 		"follower_cnt":  len(u.Follower),
 		"capture_cnt":   u.CaptureCnt,
+		"report_cnt":    u.ReportCnt,
 	}
 	if u.Nickname != "" {
 		publicProfileMap["nickname"] = u.Nickname

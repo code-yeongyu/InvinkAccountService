@@ -8,10 +8,10 @@ import (
 )
 
 // IncreaseCaptureAttemptCount godoc
-// @Summary Register an user
-// @Description Register an user with given information
+// @Summary Increase Capture Attempt Count
+// @Description Increase requested user's Capture Attempt Count
 // @Success 200 {object} EmptyResponse "Capture Attempt Count Increased"
-// @Router /capture/ [post]
+// @Router /attempt/Capture [post]
 func (ctrler *Controller) IncreaseCaptureAttemptCount(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	ID := c.MustGet("id").(uint64)
