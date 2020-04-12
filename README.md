@@ -10,7 +10,6 @@
     - [x] Remove Account
 - [x] Count Capture Attempts
 - [x] Count Report Attempts
-- [ ] Password Key for Each Request (Middleware, to prevent the abuse request)
 - [ ] Following
     - [ ] Follow someone
     - [ ] Unfollow someone
