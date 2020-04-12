@@ -13,18 +13,18 @@ import (
 
 // User is a model for each user
 type User struct {
-	ID           uint64 `gorm:"primary_key"`
-	Username     string `gorm:"column:username;unique;not null"`
-	Email        string `gorm:"column:email;unique_index;not null"`
-	Password     string `gorm:"column:password;not null"`
-	Nickname     string `gorm:"column:nickname"`
-	Bio          string `gorm:"column:bio"`
-	PictureURL   string `gorm:"column:picture_url"`
-	Following    []User `gorm:"many2many:following;foreignkey:username;default:[]"`
-	Follower     []User `gorm:"many2many:follower;foreignkey:username;default:[]"`
-	PublicKey    string `gorm:"column:public_key;not null"`
-	MyKeys       string `sql:"json" gorm:"column:my_keys;default:'{}'"`
-	ReportCounts int    `gorm:"column:report_counts;default:0"`
+	ID         uint64 `gorm:"primary_key"`
+	Username   string `gorm:"column:username;unique;not null"`
+	Email      string `gorm:"column:email;unique_index;not null"`
+	Password   string `gorm:"column:password;not null"`
+	Nickname   string `gorm:"column:nickname"`
+	Bio        string `gorm:"column:bio"`
+	PictureURL string `gorm:"column:picture_url"`
+	Following  []User `gorm:"many2many:following;foreignkey:username;default:[]"`
+	Follower   []User `gorm:"many2many:follower;foreignkey:username;default:[]"`
+	PublicKey  string `gorm:"column:public_key;not null"`
+	MyKeys     string `sql:"json" gorm:"column:my_keys;default:'{}'"`
+	CaptureCnt int    `gorm:"column:capture_cnt;default:0"`
 }
 
 func (u *User) isProperUsername(s string) bool {
@@ -179,7 +179,7 @@ func (u *User) ToPublicProfileMap() (publicProfileMap map[string]interface{}) {
 		"username":      u.Username,
 		"following_cnt": len(u.Following),
 		"follower_cnt":  len(u.Follower),
-		"report_counts": u.ReportCounts,
+		"capture_cnt":   u.CaptureCnt,
 	}
 	if u.Nickname != "" {
 		publicProfileMap["nickname"] = u.Nickname
