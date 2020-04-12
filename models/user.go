@@ -113,9 +113,9 @@ func (u *User) IsPasswordCorrect(password string) bool {
 	return bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password)) == nil
 }
 
-// SetUserByEmailOrID set's the user instance by email or id
-func (u *User) SetUserByEmailOrID(db *gorm.DB, emailOrId string) error {
-	return db.Where("email = ? OR username = ?", emailOrId, emailOrId).First(&u).Error
+// SetUserByEmailOrUsername set's the user instance by email or username
+func (u *User) SetUserByEmailOrUsername(db *gorm.DB, emailOrID string) error {
+	return db.Where("email = ? OR username = ?", emailOrID, emailOrID).First(&u).Error
 }
 
 // SetUserByID set's the user by ID

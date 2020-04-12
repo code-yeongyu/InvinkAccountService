@@ -35,7 +35,7 @@ func (ctrler *Controller) AuthUser(c *gin.Context) {
 		return
 	}
 
-	if err := user.SetUserByEmailOrID(db, inputForm.ID); err != nil {
+	if err := user.SetUserByEmailOrUsername(db, inputForm.ID); err != nil {
 		utils.AbortWithErrorResponse(c, http.StatusBadRequest, errors.AuthenticationFailureCode, "")
 		return
 	} // no such user
