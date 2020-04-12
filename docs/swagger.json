@@ -392,6 +392,9 @@
                 "code": {
                     "type": "integer"
                 },
+                "detail": {
+                    "type": "string"
+                },
                 "msg": {
                     "type": "string"
                 }

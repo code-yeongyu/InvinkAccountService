@@ -4,10 +4,11 @@ package controllers
 type EmptyResponse struct {
 }
 
-// EmailExistsResponse Example
+// TypicalErrorResponse Example
 type TypicalErrorResponse struct {
 	Code    int
 	Message string `json:"msg"`
+	Detail  string
 }
 
 // AuthenticatedResponse Example
