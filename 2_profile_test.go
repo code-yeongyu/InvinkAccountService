@@ -408,7 +408,7 @@ func TestVulerablePasswordProfilePatchRequest(t *testing.T) {
 }
 func TestIncreaseCaptureAttemptRequest(t *testing.T) {
 	var response map[string]interface{}
-	w := performRequestWithHeader(ROUTER, "POST", "/capture/", AUTHHEADER[0], nil)
+	w := performRequestWithHeader(ROUTER, "POST", "/attempt/capture/", AUTHHEADER[0], nil)
 	assert.Equal(t, http.StatusOK, w.Code)
 	w = performRequestWithHeader(
 		ROUTER,

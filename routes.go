@@ -20,7 +20,6 @@ func setupRoutes(r *gin.Engine) {
 	r.POST("/register/", c.RegisterUser)
 	r.POST("/auth/", c.AuthUser)
 
-	r.POST("/capture/", middlewares.AuthenticateJWT, c.IncreaseCaptureAttemptCount)
 	profile := r.Group("/profile")
 	profile.Use(middlewares.AuthenticateJWT)
 	{
@@ -29,5 +28,11 @@ func setupRoutes(r *gin.Engine) {
 		profile.GET("/", c.GetMyProfile)
 		profile.PATCH("/", c.UpdateMyProfile)
 		profile.DELETE("/", c.RemoveMyProfile)
+	}
+	attempt := r.Group("/attempt")
+	attempt.Use(middlewares.AuthenticateJWT)
+	{
+		attempt.POST("/capture/", c.IncreaseCaptureAttemptCount)
+		attempt.POST("/report/", c.IncreaseReportAttemptCount)
 	}
 }
