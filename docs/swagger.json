@@ -5,6 +5,34 @@
         "license": {}
     },
     "paths": {
+        "/attempt/Capture": {
+            "post": {
+                "description": "Increase requested user's Capture Attempt Count",
+                "summary": "Increase Capture Attempt Count",
+                "responses": {
+                    "200": {
+                        "description": "Capture Attempt Count Increased",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.EmptyResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/attempt/report": {
+            "post": {
+                "description": "Increase requested user's Report Attempt Count",
+                "summary": "Increase Report Attempt Count",
+                "responses": {
+                    "200": {
+                        "description": "Report Attempt Count Increased",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.EmptyResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/": {
             "post": {
                 "description": "Authenticate an user with given information, to get a jwt token",
@@ -42,20 +70,6 @@
                         "description": "Wrong format or invalid information",
                         "schema": {
                             "$ref": "#/definitions/controllers.TypicalErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/capture/": {
-            "post": {
-                "description": "Register an user with given information",
-                "summary": "Register an user",
-                "responses": {
-                    "200": {
-                        "description": "Capture Attempt Count Increased",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.EmptyResponse"
                         }
                     }
                 }

@@ -82,6 +82,24 @@ info:
   contact: {}
   license: {}
 paths:
+  /attempt/Capture:
+    post:
+      description: Increase requested user's Capture Attempt Count
+      responses:
+        "200":
+          description: Capture Attempt Count Increased
+          schema:
+            $ref: '#/definitions/controllers.EmptyResponse'
+      summary: Increase Capture Attempt Count
+  /attempt/report:
+    post:
+      description: Increase requested user's Report Attempt Count
+      responses:
+        "200":
+          description: Report Attempt Count Increased
+          schema:
+            $ref: '#/definitions/controllers.EmptyResponse'
+      summary: Increase Report Attempt Count
   /auth/:
     post:
       consumes:
@@ -110,15 +128,6 @@ paths:
           schema:
             $ref: '#/definitions/controllers.TypicalErrorResponse'
       summary: Authenticate an user
-  /capture/:
-    post:
-      description: Register an user with given information
-      responses:
-        "200":
-          description: Capture Attempt Count Increased
-          schema:
-            $ref: '#/definitions/controllers.EmptyResponse'
-      summary: Register an user
   /profile/:
     delete:
       description: Update my profile with given information
