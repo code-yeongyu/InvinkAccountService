@@ -8,7 +8,8 @@
     - [x] Changing Password
     - [x] Upload Profile Image
     - [x] Remove Account
-- [ ] Count Capture Attempts
+- [x] Count Capture Attempts
+- [x] Count Report Attempts
 - [ ] Password Key for Each Request (Middleware, to prevent the abuse request)
 - [ ] Following
     - [ ] Follow someone
