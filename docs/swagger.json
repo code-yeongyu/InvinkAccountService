@@ -47,6 +47,20 @@
                 }
             }
         },
+        "/capture/": {
+            "post": {
+                "description": "Register an user with given information",
+                "summary": "Register an user",
+                "responses": {
+                    "200": {
+                        "description": "Capture Attempt Count Increased",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.EmptyResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/profile/": {
             "get": {
                 "description": "Get a requested user's profile",
@@ -91,6 +105,50 @@
                     "application/json"
                 ],
                 "summary": "Update my profile",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Username",
+                        "name": "username",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Password",
+                        "name": "password",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Nickname",
+                        "name": "nickname",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "PictureURL",
+                        "name": "picture_url",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bio",
+                        "name": "bio",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "MyKeys",
+                        "name": "my_keys",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "CurrentPassword",
+                        "name": "current_password",
+                        "in": "path"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "No errors occurred, profile was successfully updated",

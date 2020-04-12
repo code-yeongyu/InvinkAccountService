@@ -54,6 +54,13 @@ func (ctrler *Controller) GetProfileByUsername(c *gin.Context) {
 // UpdateMyProfile godoc
 // @Summary Update my profile
 // @Description Update my profile with given information
+// @Param username path string false "Username"
+// @Param password path string false "Password"
+// @Param nickname path string false "Nickname"
+// @Param picture_url path string false "PictureURL"
+// @Param bio path string false "Bio"
+// @Param my_keys path string false "MyKeys"
+// @Param current_password path string false "CurrentPassword"
 // @Produce json
 // @Success 200 {object} EmptyResponse "No errors occurred, profile was successfully updated"
 // @Failure 400 {object} TypicalErrorResponse "Wrong format or invalid information"

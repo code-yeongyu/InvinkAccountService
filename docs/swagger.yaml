@@ -110,6 +110,15 @@ paths:
           schema:
             $ref: '#/definitions/controllers.TypicalErrorResponse'
       summary: Authenticate an user
+  /capture/:
+    post:
+      description: Register an user with given information
+      responses:
+        "200":
+          description: Capture Attempt Count Increased
+          schema:
+            $ref: '#/definitions/controllers.EmptyResponse'
+      summary: Register an user
   /profile/:
     delete:
       description: Update my profile with given information
@@ -138,6 +147,35 @@ paths:
       summary: Get my profile
     patch:
       description: Update my profile with given information
+      parameters:
+      - description: Username
+        in: path
+        name: username
+        type: string
+      - description: Password
+        in: path
+        name: password
+        type: string
+      - description: Nickname
+        in: path
+        name: nickname
+        type: string
+      - description: PictureURL
+        in: path
+        name: picture_url
+        type: string
+      - description: Bio
+        in: path
+        name: bio
+        type: string
+      - description: MyKeys
+        in: path
+        name: my_keys
+        type: string
+      - description: CurrentPassword
+        in: path
+        name: current_password
+        type: string
       produces:
       - application/json
       responses:
