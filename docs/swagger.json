@@ -166,15 +166,15 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Email",
-                        "name": "email",
+                        "description": "Username",
+                        "name": "username",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Username",
-                        "name": "username",
+                        "description": "Email",
+                        "name": "email",
                         "in": "path",
                         "required": true
                     },

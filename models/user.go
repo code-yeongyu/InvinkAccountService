@@ -13,17 +13,18 @@ import (
 
 // User is a model for each user
 type User struct {
-	ID         uint64 `gorm:"primary_key"`
-	Username   string `gorm:"column:username;unique;not null"`
-	Email      string `gorm:"column:email;unique_index;not null"`
-	Password   string `gorm:"column:password;not null"`
-	Nickname   string `gorm:"column:nickname"`
-	Bio        string `gorm:"column:bio"`
-	PictureURL string `gorm:"column:picture_url"`
-	Following  []User `gorm:"many2many:following;foreignkey:username;default:[]"`
-	Follower   []User `gorm:"many2many:follower;foreignkey:username;default:[]"`
-	PublicKey  string `gorm:"column:public_key;not null"`
-	MyKeys     string `sql:"json" gorm:"column:my_keys;default:'{}'"`
+	ID           uint64 `gorm:"primary_key"`
+	Username     string `gorm:"column:username;unique;not null"`
+	Email        string `gorm:"column:email;unique_index;not null"`
+	Password     string `gorm:"column:password;not null"`
+	Nickname     string `gorm:"column:nickname"`
+	Bio          string `gorm:"column:bio"`
+	PictureURL   string `gorm:"column:picture_url"`
+	Following    []User `gorm:"many2many:following;foreignkey:username;default:[]"`
+	Follower     []User `gorm:"many2many:follower;foreignkey:username;default:[]"`
+	PublicKey    string `gorm:"column:public_key;not null"`
+	MyKeys       string `sql:"json" gorm:"column:my_keys;default:'{}'"`
+	ReportCounts int    `gorm:"column:report_counts;default:0"`
 }
 
 func (u *User) isProperUsername(s string) bool {
@@ -56,13 +57,18 @@ func (u *User) isSecurePassword(s string) bool {
 	return number && lower && upper && special
 }
 
+// NewUser returns a new User instance
 func NewUser() *User {
 	return &User{}
 }
+
+// GenerateHashedPassword returns a hashedPassword
 func (u *User) GenerateHashedPassword(password string) (hashedPassword []byte) {
 	hashedPassword, _ = bcrypt.GenerateFromPassword([]byte(password), 12)
 	return
 }
+
+// ValidateUsername validates the username whether it's duplicate and proper
 func (u *User) ValidateUsername(db *gorm.DB, username string) int {
 	if err := db.Where("username = ?", username).First(&User{}).Error; err == nil {
 		return errors.UsernameExistsCode
@@ -72,6 +78,8 @@ func (u *User) ValidateUsername(db *gorm.DB, username string) int {
 	} // validating if username is in proper format
 	return -1
 }
+
+// ValidateEmail validates the email address whether it's duplicate and proper format
 func (u *User) ValidateEmail(db *gorm.DB, email string) int {
 	if err := db.Where("email = ?", email).First(&User{}).Error; err == nil {
 		return errors.EmailExistsCode
@@ -82,6 +90,8 @@ func (u *User) ValidateEmail(db *gorm.DB, email string) int {
 	} // validating if email is in proper format
 	return -1
 }
+
+// ValidatePassword validates the password wheter it is in secure format and the length is greater than or equal 8
 func (u *User) ValidatePassword(password string) int {
 	if len(password) < 8 {
 		return errors.PasswordTooShortCode
@@ -91,21 +101,33 @@ func (u *User) ValidatePassword(password string) int {
 	}
 	return -1
 }
+
+// IsPublicKeyInFormat returns true if the public key is in the proper format.
 func (u *User) IsPublicKeyInFormat(publicKey string) bool {
 	return strings.Contains(publicKey, "PUBLIC KEY")
 }
+
+// IsPasswordCorrect returns true if the password is correct to the instance's password
 func (u *User) IsPasswordCorrect(password string) bool {
 	return bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password)) == nil
 }
+
+// SetUserByEmailOrID set's the user instance by email or id
 func (u *User) SetUserByEmailOrID(db *gorm.DB, emailOrId string) error {
 	return db.Where("email = ? OR username = ?", emailOrId, emailOrId).First(&u).Error
 }
+
+// SetUserByID set's the user by ID
 func (u *User) SetUserByID(db *gorm.DB, ID uint64) error {
 	return db.Model(u).Where("ID = ?", ID).First(&u).Error
 }
+
+// SetUserByUsername set's the user by username
 func (u *User) SetUserByUsername(db *gorm.DB, username string) error {
 	return db.Model(u).Where("username = ?", username).First(&u).Error
 }
+
+// ToMyProfileMap converts the User model to MyProfile map
 func (u *User) ToMyProfileMap() (myProfileMap map[string]interface{}) {
 	myProfileMap = structs.Map(u)
 
@@ -150,11 +172,14 @@ func (u *User) ToMyProfileMap() (myProfileMap map[string]interface{}) {
 	// Add following and follwed usernames instead of raw following/followed model
 	return
 }
+
+// ToPublicProfileMap converts the User model to PublicProfile map
 func (u *User) ToPublicProfileMap() (publicProfileMap map[string]interface{}) {
 	publicProfileMap = map[string]interface{}{
 		"username":      u.Username,
 		"following_cnt": len(u.Following),
 		"follower_cnt":  len(u.Follower),
+		"report_counts": u.ReportCounts,
 	}
 	if u.Nickname != "" {
 		publicProfileMap["nickname"] = u.Nickname

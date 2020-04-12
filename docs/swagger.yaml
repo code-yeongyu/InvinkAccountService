@@ -187,14 +187,14 @@ paths:
       - application/json
       description: Register an user with given information
       parameters:
-      - description: Email
-        in: path
-        name: email
-        required: true
-        type: string
       - description: Username
         in: path
         name: username
+        required: true
+        type: string
+      - description: Email
+        in: path
+        name: email
         required: true
         type: string
       - description: Password
