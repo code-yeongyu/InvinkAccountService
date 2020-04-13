@@ -26,7 +26,7 @@ func performRequest(r http.Handler, method, path string, body io.Reader) *httpte
 }
 
 var ROUTER *gin.Engine
-var PUBLICKEY string
+
 var DBNAMEORIGIN string
 
 const ExampleEmail = "test@example.com"
@@ -34,22 +34,7 @@ const ExampleUsername = "testuser"
 const ExamplePassword = "A-maz1ng*pass"
 const ExampleNickname = "AmazingMengmota"
 const ExampleBio = "Hi, I'm the great Mengmota"
-
-func cleanUp(db *gorm.DB) {
-	db.DropTable(&models.User{})
-	db.DropTable("follower")
-	db.DropTable("following")
-	os.Setenv("ACCOUNT_DB_DBNAME", DBNAMEORIGIN)
-	os.Setenv("ACCOUNT_DB_DBNAME", "testing_db")
-}
-
-// test util
-
-func TestInitiateForRegistration(t *testing.T) {
-	DBNAMEORIGIN = os.Getenv("ACCOUNT_DB_DBNAME")
-	os.Setenv("ACCOUNT_DB_DBNAME", "testing_db")
-	ROUTER = setupServer()
-	PUBLICKEY = `-----BEGIN PUBLIC KEY-----
+const PUBLICKEY = `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhTGv0frCyyhs3Xs5LyHE
 4NXcM5lMqGJGNqCBo6zzjgv5BtZE5/bUHmJ8moUwTLLehtQt+wLq51wyJLe36142
 3QNGO+5TCrKNWrOAxKhTRLwlHSjiXC/RgxbFYeD0EXGi54AwQRs27VFgzPRP7q4O
@@ -58,11 +43,29 @@ DGogIrljdcLPzdlIcH9QjQJaWnfL7usl546aU0gkKjlUcB5+HUPNPkN3z9LEouHi
 Kt8yVspTqyhnMnTNQnmGG7TuVCnWPXWaBaI/Aozgilj3+BIo9SiUIqKfc0FPeV61
 LQIDAQAB
 -----END PUBLIC KEY-----`
+
+func setupDB() (db *gorm.DB) {
+	DBNAMEORIGIN = os.Getenv("ACCOUNT_DB_DBNAME")
+	os.Setenv("ACCOUNT_DB_DBNAME", "testing_db")
+	db = models.Setup()
+	db.DropTable(&models.User{})
+	db.DropTable("follower")
+	db.DropTable("following")
+	return
+}
+
+func restoreEnvironment() {
+	os.Setenv("ACCOUNT_DB_DBNAME", DBNAMEORIGIN)
+}
+
+// test util
+
+func TestInitiateForRegistration(t *testing.T) {
+	setupDB()
+	ROUTER = setupServer()
 }
 
 func TestProperRegistrationRequest(t *testing.T) {
-	db := models.Setup()
-	cleanUp(db)
 	form := &forms.Registration{
 		Email:     ExampleEmail,
 		Username:  ExampleUsername,
@@ -287,7 +290,6 @@ func TestPublicKeyEmptyRegistrationRequest(t *testing.T) {
 }
 
 // test public key error
-func TestCleanupForRegistration(t *testing.T) {
-	db := models.Setup()
-	cleanUp(db)
+func TestCleanUpForRegistration(t *testing.T) {
+	restoreEnvironment()
 }

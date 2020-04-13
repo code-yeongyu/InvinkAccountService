@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"strings"
 	"testing"
 
@@ -14,7 +13,6 @@ import (
 
 	"invink/account-service/errors"
 	"invink/account-service/forms"
-	"invink/account-service/models"
 )
 
 var AUTHHEADER []map[string]string
@@ -47,21 +45,17 @@ func getToken(ID string, password string) string {
 }
 
 func TestInitiateForProfile(t *testing.T) {
-	DBNAMEORIGIN = os.Getenv("ACCOUNT_DB_DBNAME")
-	os.Setenv("ACCOUNT_DB_DBNAME", "testing_db")
+	setupDB()
 	ROUTER = setupServer()
+
 	createUser(ExampleEmail, "test1", ExamplePassword, ExampleNickname, "")
 	createUser("test2@example.com", "test2", ExamplePassword, "", ExampleBio)
 	/* register */
 
-	AUTHHEADER = append(AUTHHEADER, map[string]string{
-		"Authorization": fmt.Sprintf("Bearer %s", getToken("test1", ExamplePassword)),
-	})
-	// get token for test1
-	AUTHHEADER = append(AUTHHEADER, map[string]string{
-		"Authorization": fmt.Sprintf("Bearer %s", getToken("test2", ExamplePassword)),
-	})
-	// get token for test2
+	AUTHHEADER = []map[string]string{
+		{"Authorization": fmt.Sprintf("Bearer %s", getToken("test1", ExamplePassword))},
+		{"Authorization": fmt.Sprintf("Bearer %s", getToken("test2", ExamplePassword))},
+	}
 
 	/* get token */
 }
@@ -531,7 +525,6 @@ func TestProperProfileDeleteRequest(t *testing.T) {
 
 // test deleting a profile
 
-func TestCleanupForProfile(t *testing.T) {
-	db := models.Setup()
-	cleanUp(db)
+func TestCleanUpForProfile(t *testing.T) {
+	restoreEnvironment()
 }

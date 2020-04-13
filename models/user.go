@@ -198,3 +198,30 @@ func (u *User) ToPublicProfileMap() (publicProfileMap map[string]interface{}) {
 	// Add nickname, bio, and picture_url only if they exists
 	return
 }
+
+// FollowByID follows an user by ID
+func (u *User) FollowByID(ID uint64) {
+
+}
+
+// UnFollowByID unfollows an user by ID
+func (u *User) UnFollowByID(ID uint64) {
+
+}
+
+// BlockedByID blocks an user by ID
+func (u *User) BlockedByID(ID uint64) {
+
+}
+
+/*
+// GetFollowers returns the list of followers' User objects
+func (u *User) GetFollowers() []User {
+
+}
+
+// GetFollowing returns the list of following users' User objects
+func (u *User) GetFollowing() []User {
+
+}
+*/

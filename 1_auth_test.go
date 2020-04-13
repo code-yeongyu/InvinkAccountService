@@ -3,14 +3,12 @@ package main
 import (
 	"encoding/json"
 	"net/http"
-	"os"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
 	"invink/account-service/forms"
-	"invink/account-service/models"
 )
 
 func createUser(email string, username string, password string, nickname string, bio string) {
@@ -45,19 +43,8 @@ LQIDAQAB
 // test util
 
 func TestInitiateForAuthentication(t *testing.T) {
-	DBNAMEORIGIN = os.Getenv("ACCOUNT_DB_DBNAME")
-	os.Setenv("ACCOUNT_DB_DBNAME", "testing_db")
+	setupDB()
 	ROUTER = setupServer()
-	PUBLICKEY = `-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhTGv0frCyyhs3Xs5LyHE
-4NXcM5lMqGJGNqCBo6zzjgv5BtZE5/bUHmJ8moUwTLLehtQt+wLq51wyJLe36142
-3QNGO+5TCrKNWrOAxKhTRLwlHSjiXC/RgxbFYeD0EXGi54AwQRs27VFgzPRP7q4O
-MtrXIinzqhhtJTorpP8t4n9FVXrpDmJnTbF5ct/3L+hCyeWmgAsrML3rHqJ+zfw1
-DGogIrljdcLPzdlIcH9QjQJaWnfL7usl546aU0gkKjlUcB5+HUPNPkN3z9LEouHi
-Kt8yVspTqyhnMnTNQnmGG7TuVCnWPXWaBaI/Aozgilj3+BIo9SiUIqKfc0FPeV61
-LQIDAQAB
------END PUBLIC KEY-----`
-
 	createUser(ExampleEmail, ExampleUsername, ExamplePassword, "", "")
 }
 
@@ -141,7 +128,6 @@ func TestWrongInfoAuthRequest(t *testing.T) {
 
 // test failure cases
 
-func TestCleanupForAuthentication(t *testing.T) {
-	db := models.Setup()
-	cleanUp(db)
+func TestCleanUpForAuthentication(t *testing.T) {
+	restoreEnvironment()
 }
